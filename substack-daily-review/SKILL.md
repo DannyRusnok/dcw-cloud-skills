@@ -37,16 +37,32 @@ Merge + sort by `scheduled_for` ASC (real DB time — NOT intended time, even if
 
 For each item, format Daniel-facing block:
 
-**Original notes:**
+**Original notes (format != 'article_promo'):**
 ```
 [N/TOTAL] HH:MM CEST — Original (<bucket> · <category>) · note id <id>
 
 > <full content body>
 
-⚠ <warn flags: ends with question, banned opener, etc.>
+⚠ <warn flags: ends with question, banned opener, missing sentence-per-line breaks, etc.>
 
 Action? (approve / redraft / edit `<text>` / delete)
 ```
+
+**Article promo notes (format = 'article_promo', has articleId + promoDayOffset):**
+```
+[N/TOTAL] HH:MM CEST — Article promo (D+<offset>) · note id <id>
+
+**Source article (id <articleId>):** "<article title>" published YYYY-MM-DD
+**Article URL:** <substackUrl>
+
+> <full content body>
+
+⚠ <warn flags + check: does body contain the article URL on its own line at the end?>
+
+Action? (approve / redraft / edit `<text>` / delete)
+```
+
+Detect article promo: `format === 'article_promo'` OR (`article_id` is not null AND `promo_day_offset` is not null). Pull source article info via `articles` table JOIN (or call grownote's article listing).
 
 **Self-restack (own note):**
 ```
@@ -160,6 +176,16 @@ Summary:
 
 Žádný další item k review. Hotovo.
 ```
+
+## Mandatory pre-display checks per note
+
+Before showing each note, verify:
+- **Sentence-per-line:** does content contain `\n\n` blank-line separators? If not, surface ⚠ "missing sentence-per-line formatting" — propose auto-reformat via `formatSentencesPerLine` (or just edit content to add breaks before display). Stored content should already have breaks; if it doesn't, `lib/format-sentences.ts` enforcement was bypassed somewhere.
+- **Question in body:** if body ends with `?`, surface ⚠ "ends with question".
+- **Banned opener:** first 4 words match any of: "This morning", "Today I", "Just shipped", "Good morning". Surface ⚠.
+- **Banned phrase:** "unlock", "game-changer", "amazing", "incredible", "10x", "leverage". Surface ⚠.
+
+These are display warnings — they don't block, they prompt Daniel to choose redraft/edit.
 
 ## Anti-patterns
 
