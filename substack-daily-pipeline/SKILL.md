@@ -100,7 +100,18 @@ After scheduling each, `POST /api/mcp/mark-feed-pool-used {id, kind: "commentary
 
 ### 7. Self-restack (1)
 
-Same as v1: yesterday's published note with highest engagement, excluded if URL in `restacksLog` (type=self) OR `self_restacked_at IS NOT NULL`. Walk back up to 7 days. Generate 2 angles (A/B) in plain EN, 10-25 words.
+**Call `GET /api/mcp/yesterday-top-original?baseDate=<today ISO>`** — endpoint picks Daniel's yesterday top-engagement **clean original** Note and returns `{candidate: {noteUrl, content, format, likes, restacks, comments, score}}`.
+
+**Server-side rules** (do NOT re-implement in skill):
+- Only ORIGINAL notes — restacks-with-note responses to others are excluded via heuristic (`scheduled_for IS NOT NULL` OR `length(content) > 250`). TODO: capture Substack `parent_id` in sync for exact discriminator.
+- `format NOT IN ('restack', 'article_promo')` — engagement actions + promo notes don't count.
+- `external_id IS NOT NULL` — need URL to restack.
+- `self_restacked_at IS NULL` AND URL not in `restacks_log` where type='self' — dedup.
+- ORDER BY `3*restacks + 2*comments + likes DESC, published_at DESC`.
+
+If `found: false` → skip self-restack with single-line note in output ("no eligible yesterday original — pool empty"). Do not walk back further than yesterday in this skill — if Daniel wants older banger, he asks for `self_banger` rationale separately.
+
+Generate **2 angles (A and B)** as fresh commentary on the candidate, 10-25 words each, plain EN, no questions. Default angle A is used by cloud routine; Daniel picks A or B in interactive mode.
 
 ### 8. Light review (internal, max 2 rounds)
 
