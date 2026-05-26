@@ -96,6 +96,48 @@ Do NOT regenerate the scenario, do NOT re-run TTS, do NOT touch other scenes.
 This path is ~10 minutes instead of ~80. For a full render (`rerender_scene`
 = `(none)`) run every step below in order.
 
+## Note mode — when `format: note`
+
+Single-scene muted promo video for Substack feed autoplay. Defaults muted because Substack feed plays without sound; the goal is a thumb-stopping 4-6s loop, not a narrated explainer. Use this format when the worker prompt has `format: note`.
+
+Pipeline differs from `reel`/`tldr`:
+
+1. Load article (Step 1 below). Extract:
+   - `cover_image_url` (REQUIRED — the visual base for the Wan i2v render). If null, abort with `FAILED: article missing cover_image_url — generate cover first via cover-image-generate skill`.
+   - `hook_text` (from worker prompt) OR auto-pick: prefer `subtitle` if 5-12 words; else first sentence of `content` trimmed to 12 words; strip trailing period.
+   - `accent_word` (from worker prompt) OR auto-pick: the first numeric token (`$2`, `5x`, `120k`) OR the first proper noun in the hook.
+
+2. Download `cover_image_url` to work dir as `note-source.png`. Do NOT call Codex — reuse the cover that's already brand-compliant.
+
+3. Submit ONE Wan 2.2 i2v render: image=note-source.png, length=97 frames @ 16fps = 6.0625s, prompt="Subtle camera drift, gentle parallax, soft light shift, no scene change, no character change", negative="static, frozen, abrupt motion, scene cut". This is intentionally low-motion to avoid distracting from the text overlay. Save as `note-bg.mp4`.
+
+4. Skip TTS entirely. Skip `scene_audio.json`. There is no spoken audio.
+
+5. Generate ASS overlay file `note-overlay.ass`:
+   - Style: white text `#e2e8f0` on subtle dark gradient strip (bottom third), `Inter` or fallback `Arial Black`, font size 64-80 depending on hook length.
+   - Position: `\an2\pos(540,1500)` (bottom center, leaves room for Substack UI chrome).
+   - Single dialogue line spanning 0:00.00 to end of clip (6s).
+   - If `accent_word` is present in hook, wrap that token in `{\c&H0026DC&}<word>{\c&HE2E8F0&}` so it pops red (BGR &H0026DC = #DC2600 orange-red, matches DCW accent). Match case-insensitively but preserve original casing.
+
+6. Compose via ffmpeg:
+   ```
+   ffmpeg -i note-bg.mp4 -vf "ass=note-overlay.ass" -c:v libx264 -preset medium -crf 19 -pix_fmt yuv420p -movflags +faststart -an note-final.mp4
+   ```
+   Note `-an` = no audio track. `-movflags +faststart` = mobile-friendly streaming.
+
+7. Visual self-check (Step 8 mechanics): read frame at 3s; verify text legibility, accent word color, no clipping.
+
+8. Upload via `uploadArticleVideo` (R2 cover-context bucket OR video bucket — match other formats). INSERT a new `article_videos` row with `format='note'`, `video_url=<r2-url>`, `duration_seconds=6.0`, scenario_json={hook_text, accent_word, source: cover_image_url}.
+
+9. Report `RESULT_URL: <url>`.
+
+Time budget: ~6-8 min total (1 Wan render + ffmpeg compose). No Codex spend, no ElevenLabs spend.
+
+Constraints:
+- ONE scene only. Multi-scene notes get truncated by Substack autoplay anyway.
+- ALWAYS muted. Even if Daniel later wants audio, the audio track stays off — the format is defined as muted feed bait.
+- ALWAYS overlay text. No silent video without a hook — it's promo, not art.
+
 ## Audio-recompose mode — when `mode: audio-recompose`
 
 If the worker prompt contains `mode: audio-recompose`, do NOT run any of the
