@@ -109,13 +109,14 @@ Pipeline differs from `reel`/`tldr`:
 
 2. Download `cover_image_url` to work dir as `note-source.png`. Do NOT call Codex — reuse the cover that's already brand-compliant.
 
-3. Submit ONE Wan 2.2 i2v render: image=note-source.png, length=97 frames @ 16fps = 6.0625s, prompt="Subtle camera drift, gentle parallax, soft light shift, no scene change, no character change", negative="static, frozen, abrupt motion, scene cut". This is intentionally low-motion to avoid distracting from the text overlay. Save as `note-bg.mp4`.
+3. Submit ONE Wan 2.2 i2v render: image=note-source.png, **landscape 16:9 — set `WanImageToVideo` width=832 height=480 (NOT the portrait 480×832 used for reels/tldr).** Notes are wide classic-view feed videos, not vertical. The cover image is already 16:9, so 832×480 preserves it without cropping. length=97 frames @ 16fps = 6.0625s, prompt="Subtle camera drift, gentle parallax, soft light shift, no scene change, no character change", negative="static, frozen, abrupt motion, scene cut". This is intentionally low-motion to avoid distracting from the text overlay. Save as `note-bg.mp4`.
 
 4. Skip TTS entirely. Skip `scene_audio.json`. There is no spoken audio.
 
-5. Generate ASS overlay file `note-overlay.ass`:
-   - Style: white text `#e2e8f0` on subtle dark gradient strip (bottom third), `Inter` or fallback `Arial Black`, font size 64-80 depending on hook length.
-   - Position: `\an2\pos(540,1500)` (bottom center, leaves room for Substack UI chrome).
+5. Generate ASS overlay file `note-overlay.ass` (**landscape 832×480** — set `PlayResX: 832` `PlayResY: 480` in `[Script Info]` so positions map to the wide canvas):
+   - Style: white text `#e2e8f0` on subtle dark gradient strip (bottom third), `Inter` or fallback `Arial Black`, font size 40-52 depending on hook length (smaller than reels — the canvas is only 480px tall).
+   - Position: `\an2\pos(416,430)` (bottom center of the 832×480 frame, leaves room for Substack UI chrome).
+   - Wrap at ~5-6 words per line; the 832px width is narrower than a portrait reel so keep lines short.
    - Single dialogue line spanning 0:00.00 to end of clip (6s).
    - If `accent_word` is present in hook, wrap that token in `{\c&H0026DC&}<word>{\c&HE2E8F0&}` so it pops red (BGR &H0026DC = #DC2600 orange-red, matches DCW accent). Match case-insensitively but preserve original casing.
 
