@@ -4,9 +4,9 @@ description: |
   Single-pass plánovač Danielova denního Substacku — engine v3 (2026-06-02), conversion-driven. Plánuje POUZE 3 originální Notes/den (žádné restacky, komentáře ani self-restacky — ty Daniel dělá ručně). Tři notes = tři archetypy, které jako jediné historicky reálně konvertovaly subscribery (analýza 401 notes přes /api/v1/note_stats: 0.13% conv, jen 7 notes vůbec získalo suba): (1) milestone/journey, (2) value + "you can do it too", (3) contrarian POV. Aplikuje conversion-format gaty (17–58 slov, first-person, žádná otázka-jako-hook, žádný "check it out"/link v těle, žádná imperativní tip šablona) + memory feedback + fact-check. Použij kdykoli Daniel řekne: "naplánuj zítřek", "daily pipeline", "naplánuj čtvrtek/pátek/sobotu/neděli/pondělí/úterý/středu", "spusť denní plán Substack", "připrav substack na zítra", "plán na zítra", "naplánuj 3 notes", "do daily plan". Default časy: 8:30 / 13:30 / 19:30 CET.
 ---
 
-# substack-daily-pipeline (v3 — conversion-driven, notes-only)
+# substack-daily-pipeline (v3.1 — conversion-driven, notes-only, image-per-note)
 
-**Co se změnilo proti v2:** zahozeny restacky / komentáře / self-restack / feed_pool / promo-batch (Daniel dělá engagement ručně — automatizace nekonvertovala). Zůstávají **3 originální Notes/den**, cílené na formáty, které jako jediné reálně přiváděly subscribery.
+**Co se změnilo proti v2:** zahozeny restacky / komentáře / self-restack / feed_pool / promo-batch (Daniel dělá engagement ručně — automatizace nekonvertovala). Zůstávají **3 originální Notes/den**, cílené na formáty, které jako jediné reálně přiváděly subscribery. **v3.1:** každá note má branded grafiku (`imageSpec` → grownote render při publishu) a skill umí `auto` mód pro cloud routinu (bez acku).
 
 ## Proč zrovna tyto 3 archetypy (data, ne dojem)
 
@@ -54,6 +54,18 @@ Zdroj: `me.md` principy, opakující se témata, mem0 preferences/learnings.
 7. **EN, žádný series prefix.**
 8. Dedup proti posledním 15 originálům (`list_recent_notes`) — žádné opakování otevíracího slova ani úhlu 3× po sobě.
 
+## Image element per note (povinné — každá note má grafiku)
+
+Každá ze 3 not dostane `imageSpec` (JSON), který grownote vyrenderuje jako branded 1080×1080 PNG a připne k notě **až při publishu** (z `notes_log.image_spec`). Tři šablony (`grownote/lib/note-image/templates.ts`), DCW paleta:
+
+- **`stat_card`** — `{template:"stat_card", headline, accentWord?, stats:[{label,value,accent?}]}` → nadpis (serif) + řádek statů. **Pro A1 milestone** s konkrétními čísly.
+- **`quote_card`** — `{template:"quote_card", quote, attribution?}` → jedna klíčová věta/přesvědčení (serif). **Pro A3 pov a A2** bez čísel. `quote` = nejsilnější věta noty, ≤120 znaků.
+- **`journey`** — `{template:"journey", headline?, accentWord?, steps:[{label,value}], highlight?}` → 2–4 kroky s šipkami, `highlight` = index oranžového. **Pro A1**, když má note progres (např. 42→64→74).
+
+Heuristika výběru: A1 → `stat_card` nebo `journey` (podle toho jestli je to snapshot vs progres), A2 → `stat_card` (má-li číslo) jinak `quote_card`, A3 → `quote_card`.
+
+Pravidla obsahu obrázku: `headline`/`quote` parafráze noty (ne celé tělo), čísla MUSÍ sedět s textem noty i fact-checkem, accentWord = 1 slovo. Náhled (volitelně): `POST /api/mcp/preview-note-image {spec}` (Bearer `GROWNOTE_MCP_TOKEN`) → PNG.
+
 ## Workflow
 
 ### 1. Pre-flight (silent, parallel)
@@ -69,7 +81,7 @@ Zdroj: `me.md` principy, opakující se témata, mem0 preferences/learnings.
 - **dcw-context-hub**: `get_context({project:"grownote"})` pro recent state (volitelně)
 
 ### 3. Draft 3 notes (1× A1, 1× A2, 1× A3)
-Aplikuj všechny gaty (sekce výše). Každá jiný angle z `lib/angles.ts`. Žádný motivational filler ("you've got this", "unlock", "game-changer"). Žádné otevírky "This morning / Today I / Just shipped".
+Aplikuj všechny gaty (sekce výše). Každá jiný angle z `lib/angles.ts`. Žádný motivational filler ("you've got this", "unlock", "game-changer"). Žádné otevírky "This morning / Today I / Just shipped". Ke každé notě sestav i `imageSpec` (viz „Image element per note").
 
 ### 4. Fact-check gate
 Každé osobní tvrzení s číslem / názvem toolu / dobou trvání → ověř paralelně proti **mem0 + dcw-context-hub** (+ Notion pokud třeba). ✅ verified / ❌ contradicts → auto-rewrite / ⚠️ unverifiable → flag, Daniel potvrdí. Hlavní riziko: A1 čísla (sub count, počty článků) — vždy proti `get_aggregates`.
@@ -91,12 +103,21 @@ Fact-check: ✅ N / ⚠️ N / ❌ N
 End: **"Pošli `ok` / `drop N` / `edit N <text>` / `stop`."**
 
 ### 7. Po ack — schedule
-- `ok` → pro každou notu `mcp__2bd50541…__schedule_note({content, scheduledFor:<ISO CET slot>, format:<archetyp>, articleId?, ctaType?})`. Sloty obsazené z kroku 1 → posuň na další volný (8:30→9:30, 13:30→14:30, 19:30→20:30).
+- `ok` → pro každou notu `mcp__2bd50541…__schedule_note({content, scheduledFor:<ISO CET slot>, format:<archetyp>, imageSpec:<viz výše>, articleId?, ctaType?})`. Sloty obsazené z kroku 1 → posuň na další volný (8:30→9:30, 13:30→14:30, 19:30→20:30).
 - `drop N` → tu notu nescheduluj.
 - `edit N <text>` → swap obsah, re-gate, pak schedule.
 - `stop` → nic nescheduluj, vrať 3 drafty jako markdown.
 
 Cron `scheduledItemsCron` v grownote (1 min) auto-publikuje v `scheduledFor`.
+
+## Cloud / autonomous mode (`auto`)
+
+Když je skill invokován s argem `auto` (denní cloud routina, ne interaktivní):
+- **Přeskoč ack-gate** (krok 6 výstup + čekání) — rovnou naplánuj všechny 3 notes (krok 7 `ok` větev) hned po light review.
+- **Zdroje jen cloud-safe**: mem0 + `get_aggregates` + `list_articles` + dcw-context-hub. **Přeskoč lokální `git log`** (cloud stroj repo nemá) — milestones ber z `get_aggregates` (sub delta) + nejnovějšího článku + mem0 decisions.
+- Fact-check gate platí dál (mem0 + dcw-context-hub). Když ❌ contradicts a nejde auto-rewritnout do gatů → tu notu **dropni** (radši 2 notes než halucinace), zaloguj.
+- Po naplánování pošli souhrn na ntfy (topic `daniel-substack`): datum + 3 řádky (slot, archetyp, prvních 60 znaků) + image template.
+- imageSpec se generuje stejně jako v interaktivním módu.
 
 ## Anti-patterns
 - Nikdy neplánuj restacky / komentáře / self-restacky — Daniel je dělá ručně (záměr v3).
