@@ -74,6 +74,20 @@ Archetypy (plné znění v playbooku §5):
 Aplikuj non-negotiables + conversion gaty. One-sentence-per-line formát (prázdný řádek
 mezi větami). Drž se fáze a vybraného archetypu.
 
+## Krok 4.5 — Vygeneruj AI pozadí (pc-mcp)
+
+Pro vizuálně bohatší kartu vygeneruj brandové pozadí přes **pc-mcp** (běží na
+Danielově PC, Codex/ComfyUI, $0):
+1. `generate_image` s promptem typu: *"Abstract minimal background for a social
+   stat card: deep navy (#0B1221) base, soft teal glow top-left and warm orange
+   glow bottom-right, clean empty center for text, flat premium tech brand, no
+   text no logos"*, `aspect:"1:1"` → vrátí `{jobId}`.
+2. Polluj `generate_image_status` s tím jobId à ~10s, dokud `status:"done"`
+   (typicky 30–100s; codex → ComfyUI fallback). Vezmi `url`.
+3. Tu URL dej do `imageSpec.backgroundUrl` (Krok 5). Pokud gen selže/timeout
+   (>3 min), pokračuj BEZ pozadí (gradient fallback je v pořádku) — nikdy kvůli
+   pozadí neblokuj naplánování note.
+
 ## Krok 5 — Postav imageSpec
 
 - **stat_card** (proof čísla):
@@ -88,6 +102,8 @@ mezi větami). Drž se fáze a vybraného archetypu.
   ```
 - **quote_card** (POV/věta): `{ "template": "quote_card", "quote": "<jedna úderná věta z note>", "attribution": "Daniel · Reel Pipeline Kit" }`
 - **ramp fáze** stat_card varianta: `HeyGen $29/mo` vs `$39 once` vs `break-even ~6 weeks`.
+- **backgroundUrl**: přidej `"backgroundUrl": "<url z Kroku 4.5>"` do imageSpec (jakýkoli
+  template ho podporuje; render fetchne + složí pod text s tmavým scrimem). Vynech, když gen selhal.
 
 Použij JEN reálná čísla z Kroku 1.
 
