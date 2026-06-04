@@ -64,6 +64,8 @@ Každá ze 3 not dostane `imageSpec` (JSON), který grownote vyrenderuje jako br
 
 Heuristika výběru: A1 → `stat_card` nebo `journey` (podle toho jestli je to snapshot vs progres), A2 → `stat_card` (má-li číslo) jinak `quote_card`, A3 → `quote_card`.
 
+**imageSpec je VOLITELNÝ — připoj ho jen když má note reálný vizuální payload:** konkrétní číslo/stat (`stat_card`/`journey`) nebo silnou samostatnou citaci ≤120 znaků (`quote_card`). Pokud note nic takového nemá (abstraktní/tenká myšlenka), **imageSpec VYNECH úplně** a naplánuj note jako text-only (`schedule_note` bez `imageSpec`). **Nikdy negeneruj prázdnou kartu** — žádný blank/whitespace `quote`, žádné `stats:[]`, žádné `steps:[]`. Lepší text-only note než blank obrázek.
+
 Pravidla obsahu obrázku: `headline`/`quote` parafráze noty (ne celé tělo), čísla MUSÍ sedět s textem noty i fact-checkem, accentWord = 1 slovo. Náhled (volitelně): `POST /api/mcp/preview-note-image {spec}` (Bearer `GROWNOTE_MCP_TOKEN`) → PNG.
 
 ## Workflow
