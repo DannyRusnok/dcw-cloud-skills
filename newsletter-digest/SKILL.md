@@ -13,7 +13,7 @@ Denní souhrn odebíraných Substack newsletterů + relevance scoring vůči Dan
 - `NOTIFY_KEY` — klíč pro subhook Telegram relay. **NENÍ v tomto skillu** (public repo) — routine prompt ho dodá. Pokud chybí, Telegram krok přeskoč a jen zaznamenej Notion URL do výstupu.
 - Gmail label pro Substack newslettery: `Label_4290506968513556957`. Pokud by neseděl, `list_labels` → najdi label s názvem "Substack".
 - Notion parent page (digesty): `34d3f179-067e-81f5-bc04-f5a40d5aae6b`.
-- Notion connector v cloudu = `notion_*` (dcw-context-hub MCP) nebo account Notion connector.
+- Notion connector v cloudu = **DCW-context-hub** (`notion_create_page` / `notion_search` / `notion_get_block_children`). NEPOUŽÍVEJ firemní/oficiální Notion konektor.
 
 ## Krok 1 — Načti kontext projektů (pro scoring)
 
