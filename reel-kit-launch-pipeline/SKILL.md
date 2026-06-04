@@ -126,12 +126,13 @@ Použij JEN reálná čísla z Kroku 1.
 
 ## Krok 7 — Telegram notifikace (review okno)
 
-Po naplánování pošli Danielovi preview na Telegram (má 9–12 na úpravu/komentář).
-Creds dostaneš z routine promptu (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`) — NIKDY je
-nedávej do hub skillu.
-1. `curl -s "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendPhoto" -d chat_id=$TELEGRAM_CHAT_ID --data-urlencode photo="<imageSpec.backgroundUrl>" --data-urlencode caption="<note text + '— publikace 12:00, scheduled id <id>, archetyp <x>'>"`
-   (pošle AI pozadí jako preview; finální composite vyrenderuje worker při publikaci).
-2. Pokud backgroundUrl chybí, použij `sendMessage` jen s textem.
+Po naplánování pošli Danielovi preview přes **subhook Telegram relay** (stejně jako
+ostatní routiny). `NOTIFY_KEY` dostaneš z routine promptu — NIKDY ho nedávej do hub skillu.
+Relay je text-only (drží bot token v subhooku), takže pošli text + bg URL inline:
+```
+curl -s -X POST "https://subhook.fly.dev/api/notify?key=$NOTIFY_KEY" -H "Content-Type: application/json" \
+  -d '{"title":"📅 Reel Kit launch note — <YYYY-MM-DD>","text":"<note text>\n\n— publikace 12:00 CET · scheduled id <id> · archetyp <x>\npozadí: <imageSpec.backgroundUrl nebo \"gradient\">\nuprav/zruš v grownote /schedule do 12:00"}'
+```
 
 Output Danielovi: fáze, archetyp, text note, imageSpec, kdy naplánováno + že odešel Telegram.
 V interaktivním běhu (ne cron) nejdřív ukaž draft k odsouhlasení; v cron módu naplánuj rovnou,
