@@ -23,9 +23,17 @@ Před scoringem si připomeň, na čem Daniel teď dělá, aby relevance nebyla 
 
 ## Krok 2 — Vytáhni nové newslettery
 
-`search_threads` query: `label:Label_4290506968513556957 is:unread newer_than:2d` (pageSize 50).
-- `is:unread` = dedup. Co projde digestem → mark read (krok 6) → příští běh nevidí. `newer_than:2d` je jen safety bound.
-- Pro každý thread `get_thread` s `FULL_CONTENT` → vezmi plaintext_body (ne jen snippet).
+`search_threads` query: `label:Substack newer_than:1d` (pageSize 50). **Pozn.:** tento Gmail MCP `label:` operator bere **název** labelu, ne ID (`label:Label_4290...` vrací `{}`). Fallback když label query selže: `from:substack.com newer_than:1d` (mine custom-domain newslettery, ale pokryje 95 %).
+
+**Dedup (Gmail konektor je READ-ONLY — nelze spoléhat na mark-read):**
+- Primární okno = `newer_than:1d` (routina běží denně 6:00, takže 24h okno = 1 den newsletterů).
+- **Cross-check proti včerejší digest page:** najdi předchozí `📰 Substack Digest` page (notion_search "Substack Digest", seřaď podle data), vytáhni všechny `Read` URL z ní, a v dnešním běhu **přeskoč jakýkoli newsletter, jehož canonical URL už tam je** (chrání před boundary duplikáty na hraně 24h okna).
+- Pokud Daniel reconnectne Gmail s write scope, krok 6 (mark-read) pak dedup zpřesní — ale skill funguje i bez toho.
+
+**Extrakce těla (DŮLEŽITÉ — emaily jsou 80–330K HTML, netahej je do kontextu):**
+- `get_thread` s `FULL_CONTENT` přeteče limit a uloží se do souboru. Z toho souboru ber pole **`plaintextBody`** (camelCase, ne `plaintext_body`).
+- Canonical post URL = řádek na začátku `plaintextBody`: `View this post on the web at <URL>`. Z něj vezmi URL, ten řádek strip.
+- Vyhoď `[ https://substack.com/redirect/... ]` tracking linky. Python regex, ne bash. Vezmi prvních ~1000–1400 znaků pro summary.
 
 **Hned vyřaď jako system/noise (nedávej do scoringu, jdou do "Dropped" countu):**
 - `no-reply@substack.com` — verification codes, "Shareable assets for…", "Your … stats in review".
@@ -70,11 +78,10 @@ Content-Type: application/json
 ```
 Drž text < 3900 znaků. Notion URL z odpovědi create_page (`url` field).
 
-## Krok 6 — Mark as read
+## Krok 6 — Mark as read (best-effort)
 
-Pro každou zpracovanou message (vč. dropped/system — všechny co prošly tímto během) odeber UNREAD label:
-`unlabel_message` messageId=<id> labelIds=["UNREAD"].
-→ příští běh je nevidí. **Nedělej** dřív než po úspěšném vytvoření Notion page.
+Pro každou zpracovanou message zkus odebrat UNREAD: `unlabel_message` messageId=<id> labelIds=["UNREAD"]. **Nedělej** dřív než po úspěšném vytvoření Notion page.
+- **Pokud vrátí "connector requires additional permissions"** = Gmail je read-only → krok přeskoč, dedup zajišťuje time-window + cross-check z kroku 2. Nezpomaluj se opakováním, jen to jednou zaznamenej do výstupu.
 
 ## Krok 7 — mem0 (volitelně, jen silné signály)
 
