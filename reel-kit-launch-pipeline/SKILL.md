@@ -17,7 +17,8 @@ non-negotiables, imageSpec šablony) je níže; není závislý na žádném lok
 - Produkt: $39 one-time / $29 early-bird, local-first, BYO-keys, Gumroad
 - Lead hook: *"One HeyGen invoice ≈ Reel Pipeline Kit. Forever."*
 - YouTube proof endpoint (tokenless read): `https://article-forge.fly.dev/api/analytics/youtube?persist=0&reelsOnly=1`
-- Launch-note slot: **11:00 CET** (mimo běžné 8:30/13:30/19:30, ať se nepřekrývá)
+- **Běh routiny: 09:00 CET** (generace) → **publikace naplánovaná na 12:00 CET** téhož dne.
+  Daniel má 9–12 okno na review/úpravu/komentář. 1 note/den.
 
 ## Non-negotiables (z playbooku + Danielových preferencí)
 
@@ -119,13 +120,22 @@ Použij JEN reálná čísla z Kroku 1.
 
 `schedule_note` s:
 - `content` = draft
-- `scheduledFor` = dnešní (nebo cílový) den 11:00 CET, ISO
+- `scheduledFor` = **dnešní den 12:00 CET** (ISO; 12:00 CET = 10:00Z mimo DST / 10:00Z; v létě CEST = 10:00Z). Použij 2026-MM-DDT10:00:00Z pro letní čas.
 - `angle` = `launch:<archetyp>` (pro dedup/rotaci)
 - `imageSpec` = z Kroku 5
 
-Output Danielovi: která fáze, jaký archetyp, text note, jaký imageSpec, kdy naplánováno.
-Pokud běží interaktivně (ne cloud cron), nejdřív ukaž draft k odsouhlasení; v cron módu
-naplánuj rovnou a jen reportuj.
+## Krok 7 — Telegram notifikace (review okno)
+
+Po naplánování pošli Danielovi preview na Telegram (má 9–12 na úpravu/komentář).
+Creds dostaneš z routine promptu (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`) — NIKDY je
+nedávej do hub skillu.
+1. `curl -s "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendPhoto" -d chat_id=$TELEGRAM_CHAT_ID --data-urlencode photo="<imageSpec.backgroundUrl>" --data-urlencode caption="<note text + '— publikace 12:00, scheduled id <id>, archetyp <x>'>"`
+   (pošle AI pozadí jako preview; finální composite vyrenderuje worker při publikaci).
+2. Pokud backgroundUrl chybí, použij `sendMessage` jen s textem.
+
+Output Danielovi: fáze, archetyp, text note, imageSpec, kdy naplánováno + že odešel Telegram.
+V interaktivním běhu (ne cron) nejdřív ukaž draft k odsouhlasení; v cron módu naplánuj rovnou,
+pošli Telegram a jen reportuj.
 
 ## Po-launch poznámka
 
