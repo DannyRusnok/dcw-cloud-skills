@@ -55,7 +55,9 @@ Greece okno dopředu (1 note/den, scheduledFor na 11:00 CET každého dne).
 
 ## Krok 2 — Voice
 
-Zavolej `get_voice_profile`. Drž Danielův hlas; engagement-grade jednoduchá angličtina.
+Zavolej `get_voice_profile`. **Fallback:** pokud vrátí "unknown tool" / chybu, odvoď hlas
+z posledních ~15 `list_recent_notes` (krátké deklarativní věty, čísla, first-person, bez fluff).
+Drž Danielův hlas; engagement-grade jednoduchá angličtina.
 
 ## Krok 3 — Vyber archetyp (rotace)
 
