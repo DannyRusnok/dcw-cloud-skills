@@ -76,17 +76,25 @@ mezi větami). Drž se fáze a vybraného archetypu.
 
 ## Krok 4.5 — Vygeneruj AI pozadí (pc-mcp)
 
-Pro vizuálně bohatší kartu vygeneruj brandové pozadí přes **pc-mcp** (běží na
-Danielově PC, Codex/ComfyUI, $0):
-1. `generate_image` s promptem typu: *"Abstract minimal background for a social
-   stat card: deep navy (#0B1221) base, soft teal glow top-left and warm orange
-   glow bottom-right, clean empty center for text, flat premium tech brand, no
-   text no logos"*, `aspect:"1:1"` → vrátí `{jobId}`.
-2. Polluj `generate_image_status` s tím jobId à ~10s, dokud `status:"done"`
-   (typicky 30–100s; codex → ComfyUI fallback). Vezmi `url`.
-3. Tu URL dej do `imageSpec.backgroundUrl` (Krok 5). Pokud gen selže/timeout
-   (>3 min), pokračuj BEZ pozadí (gradient fallback je v pořádku) — nikdy kvůli
-   pozadí neblokuj naplánování note.
+Pozadí karty = **bohatý tématický obrázek** (jako article cover), NE plochý gradient.
+Generuj přes **pc-mcp** (Danielův PC, Codex/ComfyUI, $0). Pozadí pak dostane SVG vrstvu
+(headline/stats/quote) + tmavý scrim — proto **vždy nech klidnější/tmavší plochu na text**
+(typicky levá třetina nebo horní polovina).
+
+1. `generate_image`, `useAvatar:true`, `aspect:"1:1"`, prompt = **workshop/maker scéna
+   s Danielovým avatarem** (krátké vousy, navy snapback s malou červenou hvězdou, červená
+   bunda přes tmavou mikinu), deep navy #0B1221 atmosféra, teal + warm orange rim light,
+   soft depth of field, premium build-in-public mood, **no text no logos no watermark**.
+   Scénu laď podle note/archetypu, např.:
+   - struggle-moment → maker pozdě v noci u laptopu, ruční editace, unavený
+   - milestone/launch → maker spokojeně sleduje hotový 9:16 reel zářící vedle něj
+   - contrarian → maker odmítá "subscription" UI panely, drží vlastní klíče
+   - behind-the-scenes → workshop stůl, laptop, článek → video pipeline, floating UI
+   Vždy doplň: *"keep the left third (or top half) calmer/darker for text overlay"*.
+2. Polluj `generate_image_status` à ~10s dokud `status:"done"` (~30–120s; codex→ComfyUI
+   fallback; pozn. ComfyUI ignoruje referenci, ale avatar utáhne z popisu). Vezmi `url`.
+3. URL → `imageSpec.backgroundUrl` (Krok 5). Když gen selže/timeout (>3 min), pokračuj
+   BEZ pozadí (gradient fallback OK) — nikdy kvůli pozadí neblokuj naplánování note.
 
 ## Krok 5 — Postav imageSpec
 
