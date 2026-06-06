@@ -64,7 +64,16 @@ Každá ze 3 not dostane `imageSpec` (JSON), který grownote vyrenderuje jako br
 
 Heuristika výběru: A1 → `stat_card` nebo `journey` (podle toho jestli je to snapshot vs progres), A2 → `stat_card` (má-li číslo) jinak `quote_card`, A3 → `quote_card`.
 
-**imageSpec je VOLITELNÝ — připoj ho jen když má note reálný vizuální payload:** konkrétní číslo/stat (`stat_card`/`journey`) nebo silnou samostatnou citaci ≤120 znaků (`quote_card`). Pokud note nic takového nemá (abstraktní/tenká myšlenka), **imageSpec VYNECH úplně** a naplánuj note jako text-only (`schedule_note` bez `imageSpec`). **Nikdy negeneruj prázdnou kartu** — žádný blank/whitespace `quote`, žádné `stats:[]`, žádné `steps:[]`. Lepší text-only note než blank obrázek.
+**imageSpec je DEFAULT — připoj ho téměř vždy.** Branded grafika výrazně zvyšuje retention v Notes feedu a 3/3 not má dostat obrázek. Rozhodovací strom:
+
+1. **Note obsahuje konkrétní číslo, stat, procento, peněžní částku, časový údaj, počet, nebo metriku?** → **POVINNĚ** `stat_card` (ne text-only!). Vytáhni 1-2 nejsilnější stats: `{label: "Krátký popis 1-3 slova", value: "číslo + jednotka"}`. Příklady triggerů: "80 subscribers", "$0 per render", "50 reels per month", "302 notes / 30 days", "40% of target", "9 months", "2 hours".
+2. **Note má progres / before→after / X→Y arc s 2-4 čísly?** → `journey` s `steps:[{label,value}]`.
+3. **Jinak (žádná čísla)** → `quote_card`. `quote` = nejsilnější věta/fráze noty (parafráze, ne celá nota), ≤120 znaků. Skoro vždy něco vytáhneš — i abstraktní note má jednu klíčovou tezi.
+4. **Jediný legitimní důvod text-only**: note je tak fragmentovaná / konverzační, že žádná samostatná věta nestojí jako quote (vzácné, <1/10). I tehdy radši zkrať větu → quote_card než nic.
+
+**Nikdy negeneruj prázdnou kartu** — žádný blank/whitespace `quote`, žádné `stats:[]`, žádné `steps:[]`. Když vytahuješ stat, MUSÍ to být reálné číslo z noty s jednotkou.
+
+**Anti-pattern z minulé chyby:** model si „vynech když není payload" vykládal jako „vynech vždycky" → 3/3 notes šly text-only přesto že měly konkrétní čísla. Default je IMAGE; text-only je výjimka.
 
 Pravidla obsahu obrázku: `headline`/`quote` parafráze noty (ne celé tělo), čísla MUSÍ sedět s textem noty i fact-checkem, accentWord = 1 slovo. Náhled (volitelně): `POST /api/mcp/preview-note-image {spec}` (Bearer `GROWNOTE_MCP_TOKEN`) → PNG.
 
