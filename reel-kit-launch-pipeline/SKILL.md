@@ -1,6 +1,6 @@
 ---
 name: reel-kit-launch-pipeline
-description: Standalone denní launch-marketing routina pro Reel Pipeline Kit (Gumroad, launch út 2026-07-14). Naplánuje 1 launch-marketing Substack Note/den přes substack-mcp, ODDĚLENĚ od běžného denního 3-notes pipelinu, s brandovaným obrázkem (stat_card s reálnými YouTube čísly nebo quote_card s větou). Fázuje obsah podle data (proof → teaser → ramp → launch week → post-launch) a drží se launch playbooku. Použij když Daniel řekne: "naplánuj launch notes", "reel kit launch routina", "spusť launch marketing", "launch note na dnes/zítra", "reel pipeline promo note", "marketing routina pro reel kit", nebo když to spustí cloud routine (scheduled task). NEPLÁNUJ Reddit. Cílová audience = writers/creators co publikují, NE build-in-public dav.
+description: Standalone denní launch-marketing routina pro Reel Pipeline Kit (Gumroad, launch út 2026-07-07). Naplánuje 1 launch-marketing Substack Note/den přes substack-mcp, ODDĚLENĚ od běžného denního 3-notes pipelinu, s brandovaným obrázkem (stat_card s reálnými YouTube čísly nebo quote_card s větou). Fázuje obsah podle data (proof → teaser → ramp → launch week → post-launch) a drží se launch playbooku. Použij když Daniel řekne: "naplánuj launch notes", "reel kit launch routina", "spusť launch marketing", "launch note na dnes/zítra", "reel pipeline promo note", "marketing routina pro reel kit", nebo když to spustí cloud routine (scheduled task). NEPLÁNUJ Reddit. Cílová audience = writers/creators co publikují, NE build-in-public dav.
 ---
 
 # Reel Pipeline Kit — Launch Marketing Pipeline
@@ -12,7 +12,7 @@ non-negotiables, imageSpec šablony) je níže; není závislý na žádném lok
 
 ## Konstanty
 
-- **LAUNCH_DATE = 2026-07-14** (úterý)
+- **LAUNCH_DATE = 2026-07-07** (úterý)
 - **GREECE_WINDOW = 2026-06-22 … 2026-06-30** (autopilot — pre-schedule celou dávku předem)
 - Produkt: $39 one-time / $29 early-bird, local-first, BYO-keys, Gumroad
 - Lead hook: *"One HeyGen invoice ≈ Reel Pipeline Kit. Forever."*
@@ -140,5 +140,5 @@ pošli Telegram a jen reportuj.
 
 ## Po-launch poznámka
 
-Po 2026-07-14 přepni stat_card na **buyer results** (rating count, sales count z Gumroadu)
+Po 2026-07-07 přepni stat_card na **buyer results** (rating count, sales count z Gumroadu)
 jakmile budou dostupné — do té doby drž YouTube proof + quote_card.
