@@ -36,25 +36,30 @@ prompty a platím 1/10"). NIKDY vágní advice ("be consistent"). NIKDY vymyšle
 - Závěr = výsledek + "you can do it too" beat (bez imperativní tip-šablony).
 - Žádný link v těle, žádné "check it out", žádné banned fráze.
 
-## Krok 4 — Schedule
+## Krok 4 — HARD APPROVAL (dvoufázový flow, nic se nepublikuje bez Danielova OK)
 
-`schedule_note`:
-- `content` = draft
-- `scheduledFor` = dnes **16:00 CET** (léto CEST: `2026-MM-DDT14:00:00Z`, zima: `15:00:00Z`)
-- `angle` = nejbližší label z 15 angle chips (typicky "Claude Code workflow",
-  "AI tooling trade-off", "Article Forge", "Drippery", "Substack growth", "Postmortem")
+**Fáze DRAFT (ranní run):** note NEplánuj. Ulož pending draft do souboru
+(`ops/tutorial-note-pending.json` v dcw-context-hub: `{date, content, angle, topic_source}`)
+a pošli Telegram preview s textem note + instrukcí: *"Odpověz 'ok' pro publikaci
+dnes 16:00 CET, 'ne' pro zahození."* Angle = nejbližší label z 15 angle chips
+(typicky "Claude Code workflow", "AI tooling trade-off", "Article Forge",
+"Drippery", "Substack growth", "Postmortem").
 
-Po naplánování zaloguj do mem0: `mem0_add` text `tutorial-note <YYYY-MM-DD>: <téma>`
-s metadata `{"project":"content","category":"fact"}` (dedup pro budoucí runy).
+**Fáze APPROVE (odpolední run, ~15:00):** načti pending JSON (když není, skonči).
+Přes Telegram `getUpdates` najdi Danielovu odpověď z daného chatu novější než
+draft: obsahuje-li "ok"/"ano"/"yes" → `schedule_note` (`content`, `scheduledFor` =
+dnes 16:00 CET; léto CEST `T14:00:00Z`, zima `T15:00:00Z`, `angle`) a zaloguj do
+mem0 `tutorial-note <YYYY-MM-DD>: <téma>` s metadata
+`{"project":"content","category":"fact"}`. Obsahuje-li "ne"/"skip" nebo žádná
+odpověď není → NIC neplánuj a pošli Telegram "tutorial note dnes přeskočena (bez
+schválení)". Pending soubor po zpracování smaž. Danielova úprava textu v odpovědi
+("ok, ale změň X") → aplikuj úpravu a pak naplánuj.
 
-## Krok 5 — Telegram notifikace
+## Krok 5 — Telegram
 
-`NOTIFY_KEY` dostaneš z routine promptu — NIKDY ho nedávej do tohoto skillu.
+Credentials (bot token + chat id) dostaneš z routine promptu / lokálního env —
+NIKDY je nedávej do tohoto skillu ani je nevypisuj do outputu. Posílej přímo přes
+`https://api.telegram.org/bot<TOKEN>/sendMessage` a čti přes `/getUpdates`.
 
-```
-curl -s -X POST "https://subhook.fly.dev/api/notify?key=$NOTIFY_KEY" -H "Content-Type: application/json" \
-  -d '{"title":"📚 Tutorial note — <YYYY-MM-DD>","text":"<note text>\n\n— publikace 16:00 CET · scheduled id <id> · angle <x>\nuprav/zruš v grownote /schedule do 16:00"}'
-```
-
-V interaktivním běhu (ne cron) nejdřív ukaž draft k odsouhlasení; v cron módu naplánuj
-rovnou, pošli Telegram a jen reportuj (téma, zdroj tématu, text, id).
+V interaktivním běhu (ne cron) ukaž draft k odsouhlasení v konverzaci a po OK
+naplánuj rovnou — dvoufázový Telegram flow je jen pro cron.
