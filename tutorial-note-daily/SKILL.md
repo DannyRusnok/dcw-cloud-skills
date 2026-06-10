@@ -16,7 +16,8 @@ conversion slot — měří se subs, ne likes.
 
 1. `mem0_search` query "learning discovery how-to" (limit 10) + `mem0_search` "tutorial note topic" (dedup proti minulým runům).
 2. DCW Hub `get_context` pro 2–3 aktivní projekty (article-forge, grownote, subhook) → recent commits/PRs za 7 dní.
-3. Fallback: starší mem0 learnings (vyhledej podle projektů).
+3. Hub Notion proxy `search_notion` (session recaps, research reporty, playbooky) — dobrý zdroj "how I did X" detailů s čísly.
+4. Fallback: starší mem0 learnings (vyhledej podle projektů).
 
 Vyber **JEDNO konkrétní, replikovatelné "how I did X"** s reálnými čísly a názvy nástrojů
 (např. "jak jsem snížil cost reelu na $0 přes Wan 2.2 na 12GB GPU", "jak cachuju Haiku
