@@ -201,3 +201,7 @@ These are display warnings — they don't block, they prompt Daniel to choose re
 
 `substack-daily-pipeline` — generates the schedule this skill reviews.
 `sync-skill-to-hub` — run after editing this skill so cloud routines pick up the latest version.
+
+## Attribution pravidla
+
+Při redraftech notes zavolej `mem0_search "attribution"` a aplikuj poslední týdenní akční pravidla (co reálně konvertuje subscribery); další kontext: hub `get_context` + Notion proxy `search_notion`.
