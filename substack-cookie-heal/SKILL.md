@@ -33,7 +33,10 @@ Trigger on ANY of these from a `substack-mcp` (a.k.a. grownote) tool call:
 
 ## Steps
 
-1. **Refresh.** Call the `pc-mcp` tool `substack_refresh_sid` (no args).
+1. **Refresh.** Call the `pc-mcp` tool `substack_refresh_sid`. Pass `account` if
+   the failure was on a non-primary account (e.g. `{ "account": "readsinmotion" }`);
+   omit it for the primary `danielrusnok` account. Both `danielrusnok` and
+   `readsinmotion` have a logged-in PC profile and are healable.
    - This needs the home PC awake and the `pc-mcp` connector reachable. If the
      call itself errors (connector down / timeout), the PC is likely asleep —
      skip to step 4 (alert), do NOT loop.
@@ -46,8 +49,9 @@ Trigger on ANY of these from a `substack-mcp` (a.k.a. grownote) tool call:
      `substack_refresh_sid` ONCE more, then step 4 if it still fails.
 
 3. **Set + retry.** Call the `substack-mcp` tool `set_substack_cookie` with
-   `cookie` = the returned `sid` (omit `account` — this path covers the primary
-   `danielrusnok` account only). Then **retry the original failed action once**.
+   `cookie` = the returned `sid` and the SAME `account` you refreshed (omit for
+   primary, or `account: "readsinmotion"`). Then **retry the original failed
+   action once** (with the same account).
    - Optionally confirm with `get_cookie_status` or a light read
      (`get_subscriptions`) before retrying the heavy action.
    - If the retry still 401s, go to step 4.
@@ -60,9 +64,9 @@ Trigger on ANY of these from a `substack-mcp` (a.k.a. grownote) tool call:
 
 ## Scope / limits
 
-- **Primary account only.** `substack_refresh_sid` restores the single
-  `danielrusnok` browser session. A `readsinmotion` auth failure can't be healed
-  here yet (no second profile) — for that, go straight to step 4 and alert.
+- **Two accounts healable:** `danielrusnok` (primary) and `readsinmotion`, each
+  with its own PC profile. Always heal the SAME account that failed. Any other
+  account → step 4 (alert).
 - **One refresh per routine run.** If a fresh cookie still 401s, the session is
   genuinely dead → alert, don't loop.
 - The refreshed session is valid for months; `needsLogin: true` (rare) is the
