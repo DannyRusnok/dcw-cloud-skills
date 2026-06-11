@@ -52,7 +52,9 @@ Greece okno dopředu (1 note/den, scheduledFor na 11:00 CET každého dne).
    vezmi `proof.totalViews`, `proof.videoCount`, `proof.avgViews`, `proof.topVideos[0]`.
    (Pokud fetch selže, použij jen Substack metriky a `quote_card`, ne `stat_card`.)
 2. `list_recent_notes` (limit 20) + `get_aggregates` → co rezonovalo, ať neopakuješ stejný úhel.
-3. `list_scheduled_items` → ať neplánuješ duplicitní launch note na stejný den.
+3. `list_scheduled_items` → **dedup gate**: pokud už na dnešek existuje scheduled note
+   s angle prefixem `launch:`, NIC neplánuj — pošli jen Telegram notify "launch note
+   už naplánovaná (id <id>)" a skonči.
 4. `mem0_search` query "attribution" → aplikuj poslední akční pravidla (co reálně konvertuje subscribery); další kontext: hub `get_context` + Notion proxy `search_notion`.
 
 ## Krok 2 — Voice
