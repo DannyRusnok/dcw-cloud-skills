@@ -122,8 +122,11 @@ Když je skill invokován s argem `auto` (denní cloud routina, ne interaktivní
 - **Přeskoč ack-gate** (krok 6 výstup + čekání) — rovnou naplánuj všechny 3 notes (krok 7 `ok` větev) hned po light review.
 - **Zdroje jen cloud-safe**: mem0 + `get_aggregates` + `list_articles` + dcw-context-hub. **Přeskoč lokální `git log`** (cloud stroj repo nemá) — milestones ber z `get_aggregates` (sub delta) + nejnovějšího článku + mem0 decisions.
 - Fact-check gate platí dál (mem0 + dcw-context-hub). Když ❌ contradicts a nejde auto-rewritnout do gatů → tu notu **dropni** (radši 2 notes než halucinace), zaloguj.
-- Po naplánování pošli souhrn na ntfy (topic `daniel-substack`): datum + 3 řádky (slot, archetyp, prvních 60 znaků) + image template.
+- Po naplánování pošli souhrn přes subhook Telegram relay (`NOTIFY_KEY` dodá routine
+  prompt — NIKDY ho nedávej do tohoto public skillu):
+  `curl -s -X POST "https://subhook.fly.dev/api/notify?key=$NOTIFY_KEY" -d "Substack notes scheduled — <YYYY-MM-DD>: 3 notes at 8:30/13:30/19:30 CET (images only when meaningful). Review in grownote /schedule."`
 - imageSpec se generuje stejně jako v interaktivním módu.
+- Stop POUZE na cookie-expired při pre-flightu — surface error (Telegram relay) a skonči.
 
 ## Anti-patterns
 - Nikdy neplánuj restacky / komentáře / self-restacky — Daniel je dělá ručně (záměr v3).
