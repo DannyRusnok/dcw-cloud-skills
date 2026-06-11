@@ -328,6 +328,7 @@ local ComfyUI. Mechanics are identical to `article-to-reel` Workflow B:
   NOT appear to be speaking. Motion prompts must explicitly say "mouth
   closed, not talking, no speaking motion". Negative prompt always includes:
   `text, letters, words, writing, watermark, blurry, distorted, deformed hands,
+  extra hands, extra arms, extra limbs, third hand, three hands, duplicate limbs,
   talking, speaking, lip sync, lip movement, mouth opening, mouth movement,
   mouth animation, opening mouth, moving lips`.
 - Frame length per scene = `ceil((words[-1].end + 0.4) * 16)` from the
