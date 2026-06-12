@@ -58,7 +58,7 @@ Zpracuj max **3 řádky / běh** (chrání před PR floodem). Zbytek nech na př
 6. **Self-check před otevřením:** pokud diff vypadá, že nedělá to, co `Change` popisuje, nebo sahá na něco nečekaného → zahoď branch, udělej issue místo toho.
 
 **Repo-specific guardraily (z memory):**
-- `drippery`, `framelock` → push/PR na main = prod deploy trigger; proto **jen draft PR, nikdy ne push na main** (to tu beztak neděláme). To je OK — draft PR nemerguje.
+- `drippery` → push/PR na main = prod deploy trigger; proto **jen draft PR, nikdy ne push na main** (to tu beztak neděláme). To je OK — draft PR nemerguje.
 - `dcw-cloud-skills` → public repo, žádné secrets/absolutní cesty do změn.
 
 ## Krok 4 — Fallback GitHub issue (místo PR)

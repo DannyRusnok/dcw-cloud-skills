@@ -56,7 +56,7 @@ Buď přísný — radši míň keepů s vysokým signálem.
 
 Pro newslettery se **score 4 nebo 5**, které nesou **konkrétní, přenositelnou techniku** (ne obecný trend), zvaž jestli z toho plyne **konkrétní úprava nějakého foundary toolu**. Buď velmi přísný: většina dnů = 0–2 návrhy, klidně 0. Radši žádný než vatový.
 
-**Mapa foundary toolů → repo (`DannyRusnok/<repo>`):** `drippery` (email drip SaaS), `framelock`, `article-forge` (content pipeline), `archieve-concierge`, `grownote` + `grownote-mcp` (Substack notes engine), `substack-mcp`, `subhook` (email→API orchestrator), `drippery-mcp`, `dcw-context-hub` / `dcw-context-hub-mcp`, `craft-os`, `umami-mcp`, `pc-mcp`, `finance-manager`, `dph-asistent`, `reel-pipeline-kit`. Pokud insight nesedí na žádný konkrétní tool, návrh **nedělej**.
+**Mapa foundary toolů → repo (`DannyRusnok/<repo>`):** `drippery` (email drip SaaS), `article-forge` (content pipeline), `archieve-concierge`, `grownote` + `grownote-mcp` (Substack notes engine), `substack-mcp`, `subhook` (email→API orchestrator), `drippery-mcp`, `dcw-context-hub` / `dcw-context-hub-mcp`, `craft-os`, `umami-mcp`, `pc-mcp`, `finance-manager`, `dph-asistent`, `reel-pipeline-kit`. Pokud insight nesedí na žádný konkrétní tool, návrh **nedělej**.
 
 **Kvalifikační gate (návrh dělej JEN když platí vše):**
 - Insight je actionable a **mapuje na jeden konkrétní repo** z mapy výše.
