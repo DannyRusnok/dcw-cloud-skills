@@ -20,6 +20,7 @@ NIKDY v tomto public repu — skilly na ně odkazují jako `$NOTIFY_KEY` apod.
 | Substack daily notes v3.1 | `substack-daily-pipeline/SKILL.md` | 1×/den ráno, auto mode | NOTIFY_KEY | substack-mcp, mem0, article-forge, dcw-context-hub |
 | newsletter digest | `newsletter-digest/SKILL.md` | 1×/den 06:00 CET | NOTIFY_KEY | Gmail, dcw-context-hub (Notion proxy), mem0 |
 | foundary tool PR | `foundary-tool-pr/SKILL.md` | on-demand / scheduled | NOTIFY_KEY | GitHub, dcw-context-hub (Notion proxy) |
+| weekly CEO report | `weekly-ceo-report/SKILL.md` | NE 08:00 CET | NOTIFY_KEY (jen fallback) | article-forge, substack-mcp (grownote), drippery-mcp, mem0, dcw-context-hub |
 
 ## Helper skilly (nejsou samostatné routiny)
 
