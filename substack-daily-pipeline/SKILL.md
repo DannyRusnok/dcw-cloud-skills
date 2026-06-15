@@ -142,7 +142,15 @@ Když je skill invokován s argem `auto` (denní cloud routina, ne interaktivní
 - **Přeskoč ack-gate** (krok 6 výstup + čekání) — rovnou naplánuj všechny 3 notes (krok 7 `ok` větev) hned po light review.
 - **Zdroje jen cloud-safe**: mem0 + `get_aggregates` + `list_articles` + dcw-context-hub. **Přeskoč lokální `git log`** (cloud stroj repo nemá) — milestones ber z `get_aggregates` (sub delta) + nejnovějšího článku + mem0 decisions.
 - Fact-check gate platí dál (mem0 + dcw-context-hub). Když ❌ contradicts a nejde auto-rewritnout do gatů → tu notu **dropni** (radši 2 notes než halucinace), zaloguj.
-- Po naplánování pošli souhrn na ntfy (topic `daniel-substack`): datum + 3 řádky (slot, archetyp, prvních 60 znaků) + image template.
+- Po naplánování pošli **Telegram preview se sloty** přes `send_telegram_message` (tool čte token z env sám) — formát pro redraft referenci:
+  ```
+  📝 Substack plán <YYYY-MM-DD>
+  1 · 8:30  story  "<prvních 60 znaků…>"
+  2 · 13:30 value  "<prvních 60 znaků…>"
+  3 · 19:30 pov    "<prvních 60 znaků…>"
+  Redraft: odpověz `redraft 2` (+ volitelně hint, např. `redraft 2 víc osobní`).
+  ```
+  Číslování 1/2/3 = pořadí podle času = stabilní index pro `substack-redraft-watch` (čte `list_scheduled_items` seřazené podle `scheduledFor`). Pošli i ntfy souhrn (topic `daniel-substack`) jako dřív.
 - imageSpec se generuje stejně jako v interaktivním módu.
 
 ## Redraft protocol (Telegram / remote — DETERMINISTICKÝ, sahej jen na jednu notu)
