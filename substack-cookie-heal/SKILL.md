@@ -9,6 +9,10 @@ description: >
   browser session on the home PC and returns a freshly-rotated substack.sid), pushes
   it to substack-mcp `set_substack_cookie`, then retries the failed action once. Use
   whenever a Substack auth error is seen mid-routine, before giving up or alerting.
+  ALSO run this when Daniel asks for it manually — including via a Telegram reply
+  read with `get_recent_replies` (phrases like "oprav substack cookie", "heal
+  substack", "fix substack auth", "refresh substack", "obnov cookie"): just run the
+  Steps directly, no prior auth error required.
 ---
 
 # substack-cookie-heal
@@ -30,6 +34,22 @@ Trigger on ANY of these from a `substack-mcp` (a.k.a. grownote) tool call:
 - "Substack session cookie has expired"
 - any auth/login-shaped error from `get_subscriptions`, `get_recommendations`,
   `find_reel_candidate`, `like_note`, `get_feed`, publish/restack/comment calls
+
+## Manual trigger via Telegram
+
+PC watch sessions read Daniel's Telegram replies with `get_recent_replies`. The
+alert he gets for a Substack auth failure is dead-end unless he can act on it from
+his phone, so treat an inbound reply as a heal command:
+
+- If a recent reply matches a heal phrase — **"oprav substack cookie"**, "heal
+  substack", "fix substack", "refresh substack", "obnov cookie", "heal cookie",
+  or any close paraphrase — run the **Steps** below immediately, even with no
+  prior auth error in this run. Default account = primary (`danielrusnok`); if he
+  names `readsinmotion`, heal that one.
+- After healing, reply to Daniel on Telegram (`send_telegram_message`) with the
+  outcome: ✅ healed + verified, or ❌ `needsLogin` / PC asleep (he must re-login).
+- This is the answer to "how do I fix it from my phone": Daniel writes the phrase,
+  the PC session that reads his replies runs this skill.
 
 ## Steps
 
