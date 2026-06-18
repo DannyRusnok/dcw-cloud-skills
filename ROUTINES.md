@@ -38,6 +38,10 @@ NIKDY v tomto public repu — skilly na ně odkazují jako `$NOTIFY_KEY` apod.
   `/sc daily /st 06:37 /ri 180 /du 0012:00`) — `substack-auto-like/SKILL.md`. Přesunuto
   z claude.ai 2026-06-18 (15-run/den cap). Runner `dcw-context-hub/ops/substack-auto-like.cmd`
   fetchuje SKILL.md (Sonnet, zdarma na subscription). Cloud routinu po ověření vypnout.
+- **SubstackDailyNotes** (schtask, denně 7:15 CET) — `substack-daily-pipeline/SKILL.md` v `auto`
+  mode pro target_date=TODAY. Přesunuto z claude.ai 2026-06-18 (15-run/den cap). Runner
+  `dcw-context-hub/ops/substack-daily-notes.cmd` fetchuje SKILL.md + inline fallback (Sonnet,
+  zdarma na subscription). Cloud routinu vypnuto 2026-06-18.
 
 ## Bootstrap šablona (prompt routiny v claude.ai)
 
