@@ -17,6 +17,22 @@ a restarting render server: the render just waits its turn in the queue.
 
 NOTIFY_KEY=3cebe32fb52d24f41f462aa793349b5d
 
+## Self-heal on Substack auth errors
+
+If ANY substack-mcp call in this routine (find_reel_candidate, enqueue_reel_outreach,
+or any later call) returns an auth error — `auth_expired`, HTTP 401/403,
+"subscriptions returned 401 (cookie expired)", "recommendations could not resolve
+publication id", or "Substack session cookie has expired" — DO NOT fail. Instead:
+
+1. WebFetch `https://raw.githubusercontent.com/DannyRusnok/dcw-cloud-skills/main/substack-cookie-heal/SKILL.md`
+   and follow it with `account: "readsinmotion"` (this routine always runs as that
+   account).
+2. Then retry the original failed action ONCE.
+3. Only if the heal itself fails (`needsLogin: true`, PC unreachable, or the
+   retry still 401s) → send a failure notify via subhook and exit.
+
+One refresh per run; no retry loops.
+
 ## STEP 1 — candidate
 
 find_reel_candidate (substack-mcp) `{ source: 'suggestions', account: 'readsinmotion', topK: 25, daysBack: 30, excludeRecentAuthorDays: 7 }`. It excludes official Substack pubs, holds the follower band, and skips articles already done + authors tapped in the last 7 days (global across both accounts). Take THE TOP candidate with a non-null `authorHandle` AND `authorUserId` = THE PICK. If none qualify, Bash-curl the success notify (title `Reads in Motion — no candidate`, text `Suggestions pool returned nothing new this run.`) and exit.
