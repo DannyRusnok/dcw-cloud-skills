@@ -34,6 +34,10 @@ NIKDY v tomto public repu — skilly na ně odkazují jako `$NOTIFY_KEY` apod.
   Přesunuto z claude.ai 2026-06-18 (vyčerpaný 15-run/den cap). Runner
   `dcw-context-hub/ops/reel-kit-launch-pipeline.cmd` fetchuje SKILL.md a běží cron/auto
   mode (Sonnet, zdarma na subscription). Sunset po 2026-08-01.
+- **SubstackAutoLike** (schtask, 5×/den 6:37/9:37/12:37/15:37/18:37 CET, jeden task
+  `/sc daily /st 06:37 /ri 180 /du 0012:00`) — `substack-auto-like/SKILL.md`. Přesunuto
+  z claude.ai 2026-06-18 (15-run/den cap). Runner `dcw-context-hub/ops/substack-auto-like.cmd`
+  fetchuje SKILL.md (Sonnet, zdarma na subscription). Cloud routinu po ověření vypnout.
 
 ## Bootstrap šablona (prompt routiny v claude.ai)
 
