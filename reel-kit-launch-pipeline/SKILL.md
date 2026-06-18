@@ -52,9 +52,7 @@ Greece okno dopředu (1 note/den, scheduledFor na 11:00 CET každého dne).
    vezmi `proof.totalViews`, `proof.videoCount`, `proof.avgViews`, `proof.topVideos[0]`.
    (Pokud fetch selže, použij jen Substack metriky a `quote_card`, ne `stat_card`.)
 2. `list_recent_notes` (limit 20) + `get_aggregates` → co rezonovalo, ať neopakuješ stejný úhel.
-3. `list_scheduled_items` → **dedup gate**: pokud už na dnešek existuje scheduled note
-   s angle prefixem `launch:`, NIC neplánuj — pošli jen Telegram notify "launch note
-   už naplánovaná (id <id>)" a skonči.
+3. `list_scheduled_items` → ať neplánuješ duplicitní launch note na stejný den.
 4. `mem0_search` query "attribution" → aplikuj poslední akční pravidla (co reálně konvertuje subscribery); další kontext: hub `get_context` + Notion proxy `search_notion`.
 
 ## Krok 2 — Voice
@@ -65,6 +63,11 @@ Drž Danielův hlas; engagement-grade jednoduchá angličtina.
 
 ## Krok 3 — Vyber archetyp (rotace)
 
+**Screenshot dny = pondělí / středa / pátek.** Pokud dnešní den (CET) spadá na Po/St/Pá,
+archetyp = **screenshot_card** (viz Krok 3.5) — přeskoč běžnou rotaci níže i Krok 4.5
+(AI pozadí se negeneruje, obrázek je hotová karta z poolu). Ostatní dny jedou normální
+rotace. Tím vychází 2–3 screenshot notes/týden, zbytek stat/quote dle fáze.
+
 Z tabulky fáze vyber archetyp. **Nikdy 2× za sebou stejný** — zkontroluj poslední 3
 launch notes (`list_recent_notes` + `list_scheduled_items`, filtruj `angle` prefixem `launch:`).
 Archetypy (plné znění v playbooku §5):
@@ -73,12 +76,39 @@ Archetypy (plné znění v playbooku §5):
 - **contrarian POV** — anti-subscription ("expensive part was never the AI")
 - **behind-the-scenes / vulnerability** — přiznej malá čísla, ukaž proč jsi tool postavil
 
+## Krok 3.5 — screenshot_card archetyp (RPK product screenshots)
+
+Pool premium karet z reálného RPK UI (browser/phone/terminal mockupy, 1080² na R2).
+Karta nese **vlastní headline + frame + footer** — note body ji NEduplikuje, jen na ni
+navazuje konkrétním pain/výsledkem (žádné "podívej se", žádný link v těle).
+
+**Výběr karty:** vezmi z poolu **první nepoužitou** (dedup proti `launch:shot:<name>`
+v `list_recent_notes` + `list_scheduled_items`). Když jsou všechny použité, recykluj
+nejdéle nepoužitou.
+
+| name (angle `launch:shot:<name>`) | backgroundUrl | note-body pain/výsledek úhel |
+|---|---|---|
+| `overview` | `https://pub-ca661161370d461a9fec22ff4d33f29e.r2.dev/rpk-pool/card-overview.png` | tření při výrobě reelu z postu → jedna URL, hotovo za pár minut |
+| `editor` | `https://pub-ca661161370d461a9fec22ff4d33f29e.r2.dev/rpk-pool/card-editor.png` | AI nadraftuje scénář, ale TY řídíš každou scénu — není to black box |
+| `renders` | `https://pub-ca661161370d461a9fec22ff4d33f29e.r2.dev/rpk-pool/card-renders.png` | 50 reelů, všechny z vlastních článků, všechny lokálně — konzistence se nabaluje |
+| `install` | `https://pub-ca661161370d461a9fec22ff4d33f29e.r2.dev/rpk-pool/card-install.png` | běží na tvém stroji, tvé klíče, $0 za render — žádné předplatné |
+| `reel-a` | `https://pub-ca661161370d461a9fec22ff4d33f29e.r2.dev/rpk-pool/card-reel-a.png` | co reálně vypadne — narrated, captioned, hotový 9:16 |
+| `reel-b` | `https://pub-ca661161370d461a9fec22ff4d33f29e.r2.dev/rpk-pool/card-reel-b.png` | tvůj článek se promění v tohle — automaticky narrated + captioned |
+| `reel-c` | `https://pub-ca661161370d461a9fec22ff4d33f29e.r2.dev/rpk-pool/card-reel-c.png` | animované stilly + tvůj klonovaný hlas |
+
+Body drž v non-negotiables + conversion gatech (17–58 slov, first-person, hook není
+otázka, žádná imperativní tip-šablona, EN). `imageSpec` = `{ "template": "screenshot",
+"backgroundUrl": "<url karty>" }` (Krok 5). `angle` = `launch:shot:<name>`. Zdroj poolu +
+generátor: `tmp/rpk-shots/` (shoot*.mjs + dress.mjs + uploadr2.mjs).
+
 ## Krok 4 — Nadraftuj 1 note
 
 Aplikuj non-negotiables + conversion gaty. One-sentence-per-line formát (prázdný řádek
 mezi větami). Drž se fáze a vybraného archetypu.
 
 ## Krok 4.5 — Vygeneruj AI pozadí (pc-mcp)
+
+**Screenshot dny (Po/St/Pá) tento krok přeskoč** — obrázek je hotová karta z poolu (Krok 3.5).
 
 Pozadí karty = **bohatý tématický obrázek** (jako article cover), NE plochý gradient.
 Generuj přes **pc-mcp** (Danielův PC, Codex/ComfyUI, $0). Pozadí pak dostane SVG vrstvu
@@ -102,6 +132,7 @@ Generuj přes **pc-mcp** (Danielův PC, Codex/ComfyUI, $0). Pozadí pak dostane 
 
 ## Krok 5 — Postav imageSpec
 
+- **screenshot** (Po/St/Pá, Krok 3.5): `{ "template": "screenshot", "backgroundUrl": "<url karty z poolu>" }` — full-bleed hotová karta, žádný overlay text/header. Vynech zbytek tohoto kroku i Krok 4.5.
 - **stat_card** (proof čísla):
   ```json
   { "template": "stat_card",
