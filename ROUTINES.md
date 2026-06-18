@@ -14,7 +14,7 @@ NIKDY v tomto public repu — skilly na ně odkazují jako `$NOTIFY_KEY` apod.
 |---|---|---|---|---|
 | Reads in Motion - big newsletters | `reads-in-motion-big/SKILL.md` | 5×/den (07:11, 11:11, 14:11, 18:11, 21:11) | NOTIFY_KEY | substack-mcp, pc-mcp |
 | Reels from top foreign articles (RPK outreach) | `rpk-outreach-reels/SKILL.md` | 3×/den (07:13, 13:13, 19:13) | NOTIFY_KEY | substack-mcp, pc-mcp |
-| Reel Pipeline Kit launch notes | `reel-kit-launch-pipeline/SKILL.md` | 1×/den 09:00 CET | NOTIFY_KEY | substack-mcp, pc-mcp, mem0, dcw-context-hub |
+| ~~Reel Pipeline Kit launch notes~~ → přesunuto na PC (viz níže) | `reel-kit-launch-pipeline/SKILL.md` | — | NOTIFY_KEY | substack-mcp, pc-mcp, mem0, dcw-context-hub |
 | Substack auto-like | `substack-auto-like/SKILL.md` | 5×/den | NOTIFY_KEY | substack-mcp |
 | mem0 weekly consolidation | `mem0-weekly-consolidation/SKILL.md` | NE 09:00 CEST | NOTIFY_KEY, HEARTBEAT_TOKEN | mem0, dcw-context-hub (optional) |
 | Substack daily notes v3.1 | `substack-daily-pipeline/SKILL.md` | 1×/den ráno, auto mode | NOTIFY_KEY | substack-mcp, mem0, article-forge, dcw-context-hub |
@@ -30,6 +30,10 @@ NIKDY v tomto public repu — skilly na ně odkazují jako `$NOTIFY_KEY` apod.
 
 - `tutorial-note-daily/SKILL.md`, `substack-daily-review/SKILL.md`, `article-to-reel-auto/SKILL.md`,
   `medium-backfill/SKILL.md`, `aivideo-pc-ssh/SKILL.md`, `disk-cleanup/SKILL.md`.
+- **RpkLaunchPipeline** (schtask, denně 9:07 CET) — `reel-kit-launch-pipeline/SKILL.md`.
+  Přesunuto z claude.ai 2026-06-18 (vyčerpaný 15-run/den cap). Runner
+  `dcw-context-hub/ops/reel-kit-launch-pipeline.cmd` fetchuje SKILL.md a běží cron/auto
+  mode (Sonnet, zdarma na subscription). Sunset po 2026-08-01.
 
 ## Bootstrap šablona (prompt routiny v claude.ai)
 
