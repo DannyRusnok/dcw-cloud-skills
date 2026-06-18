@@ -42,6 +42,13 @@ NIKDY v tomto public repu — skilly na ně odkazují jako `$NOTIFY_KEY` apod.
   mode pro target_date=TODAY. Přesunuto z claude.ai 2026-06-18 (15-run/den cap). Runner
   `dcw-context-hub/ops/substack-daily-notes.cmd` fetchuje SKILL.md + inline fallback (Sonnet,
   zdarma na subscription). Cloud routinu vypnuto 2026-06-18.
+- **ReadsInMotionBig** (1 task, 5 daily triggerů 7:11/11:11/14:11/18:11/21:11 CET) —
+  `reads-in-motion-big/SKILL.md`, Substack MCP + PC MCP. Přesunuto z claude.ai 2026-06-18.
+  Runner `dcw-context-hub/ops/reads-in-motion-big.cmd`. Registrováno přes Register-ScheduledTask
+  (multi-trigger; MSA účet → bez explicitního -Principal). Cloud po ověření vypnout.
+- **RpkOutreachReels** (1 task, 3 daily triggery 7:13/13:13/19:13 CET) —
+  `rpk-outreach-reels/SKILL.md`, Substack MCP + PC MCP. Přesunuto z claude.ai 2026-06-18.
+  Runner `dcw-context-hub/ops/rpk-outreach-reels.cmd`. Cloud po ověření vypnout.
 
 ## Bootstrap šablona (prompt routiny v claude.ai)
 
