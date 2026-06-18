@@ -1,27 +1,43 @@
 ---
 name: tutorial-note-daily
-description: Denní routina — 1 step-by-step tutoriálová Substack Note navíc ke 3-notes pipelinu (4. slot, publikace 16:00 CET). Téma bere z reálné nedávné práce: mem0 (learnings/discoveries z Claude sessions), DCW Context Hub (recent commits/PRs). Tutoriálové "how I did X" notes mají dle research nejvyšší konverzi na subscribery — tohle je conversion slot, ne engagement slot. Použij když Daniel řekne: "tutorial note", "naplánuj tutoriál", "tutorial slot", "udělej how-to note", nebo když to spustí cloud routine (scheduled task).
+description: Denní routina — 1 obecná "AI for normals" tutoriálová Substack Note navíc ke 3-notes pipelinu (4. slot, publikace 16:00 CET). Téma bere z reálné nedávné práce (mem0 learnings, DCW Context Hub commits/PRs), ale ABSTRAHUJE ho na obecný princip pro běžného AI uživatele — žádný kód, žádné názvy nástrojů z infry. Tyhle praktické "jak používat AI" notes konvertují na subscribery líp než engagement posty — tohle je conversion slot, ne engagement slot. Použij když Daniel řekne: "tutorial note", "naplánuj tutoriál", "tutorial slot", "udělej how-to note", nebo když to spustí cloud routine (scheduled task).
 ---
 
 # Tutorial Note Daily — 4. denní slot
 
-Naplánuje **1 step-by-step tutoriálovou Note/den** přes `substack-mcp`, odděleně od
+Naplánuje **1 obecnou "AI for normals" tutoriálovou Note/den** přes `substack-mcp`, odděleně od
 běžného 3-notes pipelinu (8:30/13:30/19:30) i launch routiny (12:00). Publikace **16:00 CET**.
 
-Proč: analýza 10k-subs Substacku ukázala, že step-by-step tutoriálové notes ("how I did X,
-kroky 1-2-3") konvertují na subscribery výrazně líp než engagement posty. Tohle je
-conversion slot — měří se subs, ne likes.
+Proč: dřív skill generoval tech deep-dive ("jak cachuju Haiku prompty na 12GB GPU") —
+Danielovi followers (writers/creators, ne devs) tomu nerozumí a nic jim to neřekne.
+Nově: zdroj zůstává Danielova reálná práce (mem0), ale každý learning se **přeloží na obecný
+princip použitelný pro kohokoli, kdo používá AI** — bez kódu, bez tech žargonu. Cíl: subs, ne likes.
 
-## Krok 1 — Najdi téma z reálné práce (priorita zdrojů)
+## Krok 1 — Najdi RAW learning z reálné práce (priorita zdrojů)
 
 1. `mem0_search` query "learning discovery how-to" (limit 10) + `mem0_search` "tutorial note topic" (dedup proti minulým runům).
 2. DCW Hub `get_context` pro 2–3 aktivní projekty (article-forge, grownote, subhook) → recent commits/PRs za 7 dní.
-3. Hub Notion proxy `search_notion` (session recaps, research reporty, playbooky) — dobrý zdroj "how I did X" detailů s čísly.
+3. Hub Notion proxy `search_notion` (session recaps, research reporty, playbooky).
 4. Fallback: starší mem0 learnings (vyhledej podle projektů).
 
-Vyber **JEDNO konkrétní, replikovatelné "how I did X"** s reálnými čísly a názvy nástrojů
-(např. "jak jsem snížil cost reelu na $0 přes Wan 2.2 na 12GB GPU", "jak cachuju Haiku
-prompty a platím 1/10"). NIKDY vágní advice ("be consistent"). NIKDY vymyšlená čísla.
+Vyber **JEDEN konkrétní learning / discovery / trade-off** z reálné práce. V téhle fázi je
+ještě tech-specific (názvy nástrojů, čísla) — to je OK, abstrakce přijde v Kroku 1.5.
+
+## Krok 1.5 — Abstrahuj na obecný princip (AI for normals)
+
+Z raw learningu vydestiluj: **"co se z toho může naučit někdo, kdo nekóduje a jen používá AI?"**
+
+- Zahoď názvy nástrojů z infry (Haiku, Wan, ComfyUI, mem0, queue, GPU, R2…), čísla z infry, kód.
+- Nech jádro principu = obecné chování při práci s AI, které platí pro běžného člověka.
+- Doplň **lidský, relatable příklad** (psaní mailu, plánování, učení, organizace), ne dev příklad.
+
+Příklady transformace:
+- raw: *"cachuju Haiku prompty, platím 1/10"* → princip: *"Když AI dáváš pořád to samé zadání, napiš kontext jednou a měň jen detail — ušetříš čas i peníze."*
+- raw: *"video render jedu přes queue ať neblokuje"* → princip: *"Nech AI dělat dlouhé úkoly na pozadí, nečekej u obrazovky."*
+- raw: *"Haiku ztrácel nit na multi-step bězích, přepnul jsem na Sonnet"* → princip: *"Na složitější vícekrokové úkoly nasaď silnější model — levnější model se na dlouhé trati ztratí."*
+
+Pokud z learningu NEJDE udělat obecný princip bez tech žargonu (je čistě infra), zahoď ho a
+vezmi další kandidát z Kroku 1. NIKDY vágní advice ("be consistent"). NIKDY vymyšlená čísla.
 
 ## Krok 2 — Dedup
 
@@ -30,11 +46,12 @@ prompty a platím 1/10"). NIKDY vágní advice ("be consistent"). NIKDY vymyšle
 
 ## Krok 3 — Draft (format gaty)
 
-- Angličtina, first-person, jednoduchá engagement-grade EN.
+- Angličtina, first-person, jednoduchá engagement-grade EN. **Žádný kód, žádný tech žargon.**
 - **One sentence per line** (prázdný řádek mezi větami).
-- 40–100 slov. Hook = outcome statement, NE otázka ("I render AI reels for $0 on a 3-year-old GPU.").
-- Tělo = 2–4 očíslované kroky, každý krok konkrétní nástroj/akce/číslo.
-- Závěr = výsledek + "you can do it too" beat (bez imperativní tip-šablony).
+- 40–100 slov. Hook = konkrétní outcome/princip, NE otázka ("Most people use AI like a search box. Here's the shift that doubled what I get out of it.").
+- Tělo = 2–4 očíslované kroky, každý krok obecná akce + relatable (ne-dev) příklad.
+- Závěr = "tohle zvládneš taky" beat (bez imperativní tip-šablony).
+- Mám-li chuť napsat název nástroje z infry nebo číslo z GPU/queue/modelu → STOP, to je signál že abstrakce z Kroku 1.5 selhala.
 - Žádný link v těle, žádné "check it out", žádné banned fráze.
 
 ## Krok 4 — HARD APPROVAL (dvoufázový flow, nic se nepublikuje bez Danielova OK)
