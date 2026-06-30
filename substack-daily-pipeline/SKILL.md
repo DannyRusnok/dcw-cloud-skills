@@ -142,13 +142,26 @@ Když je skill invokován s argem `auto` (denní cloud routina, ne interaktivní
 - **Přeskoč ack-gate** (krok 6 výstup + čekání) — rovnou naplánuj všechny 3 notes (krok 7 `ok` větev) hned po light review.
 - **Zdroje jen cloud-safe**: mem0 + `get_aggregates` + `list_articles` + dcw-context-hub. **Přeskoč lokální `git log`** (cloud stroj repo nemá) — milestones ber z `get_aggregates` (sub delta) + nejnovějšího článku + mem0 decisions.
 - Fact-check gate platí dál (mem0 + dcw-context-hub). Když ❌ contradicts a nejde auto-rewritnout do gatů → tu notu **dropni** (radši 2 notes než halucinace), zaloguj.
-- Po naplánování pošli **Telegram preview se sloty** přes `send_telegram_message` (tool čte token z env sám) — formát pro redraft referenci:
+- Po naplánování pošli **bohatý Telegram preview** přes `send_telegram_message` (tool čte token z env sám). Pro každou notu uveď: slot + čas + archetyp label + `scheduledItemId`, **celé tělo noty** (ne ořez), řádek s grafikou (`🖼 stat_card: <stat>` / `🖼 quote_card: "<quote>"` / `🖼 text-only`), a fact-check řádek (`✅ Fact-check: <zdroj>` nebo `⚠️ <co bylo přeformulováno/dropnuto>`). Header nese počet subů z `get_aggregates`. Formát:
   ```
-  📝 Substack plán <YYYY-MM-DD>
-  1 · 8:30  story  "<prvních 60 znaků…>"
-  2 · 13:30 value  "<prvních 60 znaků…>"
-  3 · 19:30 pov    "<prvních 60 znaků…>"
-  Redraft: odpověz `redraft 2` (+ volitelně hint, např. `redraft 2 víc osobní`).
+  📅 Substack notes scheduled — <YYYY-MM-DD> | <N> subs
+
+  1️⃣ 08:30 CET — Personal Story [#<id>]
+  "<celé tělo noty 1>"
+  🖼 stat_card: <stat>
+  ✅ Fact-check: <zdroj>
+
+  2️⃣ 13:30 CET — Value + Invite [#<id>]
+  "<celé tělo noty 2>"
+  🖼 stat_card: <stat>
+  ✅ Fact-check: <zdroj>
+
+  3️⃣ 19:30 CET — Contrarian POV [#<id>]
+  "<celé tělo noty 3>"
+  🖼 text-only
+  ✅ Fact-check: <zdroj>
+
+  Reply "redraft 1/2/3" to request a revision.
   ```
   Číslování 1/2/3 = pořadí podle času = stabilní index pro `substack-redraft-watch` (čte `list_scheduled_items` seřazené podle `scheduledFor`). Pošli i ntfy souhrn (topic `daniel-substack`) jako dřív.
 - imageSpec se generuje stejně jako v interaktivním módu.
