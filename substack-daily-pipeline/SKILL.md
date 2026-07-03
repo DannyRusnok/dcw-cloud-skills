@@ -136,7 +136,10 @@ Sub count: <N>  (+<d7> 7d / +<d30> 30d)
   19:30  A3 pov           #<angle>   "<prvních 70 znaků…>"   [fact-check]
 
 Fact-check: ✅ N / ⚠️ N / ❌ N
-Grounding: A1 [E2,E3] · A2 [E1] · A3 [—kvalitativní]
+Grounding (fakta slovy, ne kódy — Daniel je musí umět zkontrolovat na první pohled):
+  A1 ← "subs 214, +3/7d" (get_aggregates)
+  A2 ← "'Same 26 Views' top riser, 61% read ratio" (insights)
+  A3 ← žádná — jen názor/scéna
 ```
 End: **"Pošli `ok` / `drop N` / `edit N <text>` / `stop`."**
 
