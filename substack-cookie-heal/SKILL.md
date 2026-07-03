@@ -62,11 +62,26 @@ his phone, so treat an inbound reply as a heal command:
      skip to step 4 (alert), do NOT loop.
 
 2. **Evaluate the result.**
-   - `{ ok: true, sid }` → go to step 3.
-   - `{ ok: false, needsLogin: true }` → the months-long PC browser session has
-     expired. Cannot self-heal. Go to step 4 (alert) — Daniel must re-login.
+   - `{ ok: true, sid }` → go to step 3. (`deadSlots` in the payload is FYI —
+     the PC already telegram-notified Daniel; failover to a live slot worked.)
+   - `{ ok: false, needsLogin: true }` → ALL session slots on the PC are dead.
+     Try the **unattended re-login** (step 2b) before alerting.
    - `{ ok: false, error }` (no needsLogin) → transient; you MAY retry
      `substack_refresh_sid` ONCE more, then step 4 if it still fails.
+
+2b. **Unattended re-login (only on needsLogin, only if this routine has Gmail
+    access).** The PC relogin browser is de-flagged, so the reCAPTCHA-gated
+    login email often DOES get delivered now:
+   1. Call pc-mcp `substack_relogin_start` with `email` =
+      `danielrusnok@gmail.com` (primary). Expect `{ jobId, status: "awaiting_code" }`
+      (or `status:"done"` with `sid` → jump to step 3).
+   2. Wait ~30 s, then search Gmail for a message with subject matching
+      "NNNNNN is your Substack verification code" received in the last 5 min.
+      No email after 2 checks ≈ reCAPTCHA still suppressed it → step 4.
+   3. Call `substack_relogin_submit` with the `jobId` and the 6-digit code.
+      `{ status: "done", sid }` → step 3. Anything else → step 4.
+   - Note: this re-login restores slot 1 only; if Daniel uses multiple slots he
+     re-logins the extra slots himself (`npx tsx manual-login.ts <account> <slot>`).
 
 3. **Set + retry.** Call the `substack-mcp` tool `set_substack_cookie` with
    `cookie` = the returned `sid` and the SAME `account` you refreshed (omit for
@@ -89,8 +104,10 @@ his phone, so treat an inbound reply as a heal command:
   account → step 4 (alert).
 - **One refresh per routine run.** If a fresh cookie still 401s, the session is
   genuinely dead → alert, don't loop.
-- The refreshed session is valid for months; `needsLogin: true` (rare) is the
-  only case that needs Daniel.
+- The refreshed session is valid for months. Each account has up to 3 redundant
+  session slots on the PC (`manual-login.ts <account> <slot>`); a dead slot
+  fails over silently. `needsLogin: true` = ALL slots dead — try the unattended
+  re-login (2b) first; Daniel is needed only if that fails too.
 
 ## One-liner to add to a routine prompt
 
