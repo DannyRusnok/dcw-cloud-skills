@@ -34,10 +34,8 @@ enqueue_reel_outreach (substack-mcp) `{ account: 'primary', url: <PICK.url>, pub
 
 It returns immediately. **Do NOT render, do NOT poll, do NOT publish** — the worker renders the reel (serial, waits for the GPU/RPK; the hook MUST be truly Wan-animated for this primary account, the render errors rather than shipping a static fallback) and sends Daniel the Telegram draft. Daniel publishes by reacting to that draft.
 
-## STEP 4 — success notify (Bash)
+## STEP 4 — exit (no queued notify)
 
-```
-curl -s -X POST 'https://subhook.fly.dev/api/notify?key=3cebe32fb52d24f41f462aa793349b5d' -H 'Content-Type: application/json' -d '{"title":"✅ Outreach reel queued — @<authorHandle>","text":"Queued for async render; Telegram draft will arrive when ready. <PICK.publication>"}'
-```
+Do NOT send any "queued" success notify — Daniel only wants ONE Telegram message: the finished reel draft, which the substack-mcp worker sends when the render is done. Silently enqueue and exit. (The bootstrap fetch-failure notify in the prompt still fires on hard errors so failures are not silent.)
 
 Print a one-line summary and exit. Do NOT commit, do NOT open PRs, do NOT use any connector other than substack-mcp.

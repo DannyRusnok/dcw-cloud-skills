@@ -52,10 +52,8 @@ enqueue_reel_outreach (substack-mcp) `{ account: 'readsinmotion', url: <PICK.url
 
 It returns immediately. **Do NOT render, do NOT poll, do NOT upload, do NOT publish** — the worker renders the reel (serial, waits for the GPU/RPK), auto-publishes it as Reads in Motion, and adds the danielrusnok promo comment, all asynchronously.
 
-## STEP 4 — success notify (Bash)
+## STEP 4 — exit (no queued notify)
 
-```
-curl -s -X POST 'https://subhook.fly.dev/api/notify?key=3cebe32fb52d24f41f462aa793349b5d' -H 'Content-Type: application/json' -d '{"title":"✅ Reads in Motion queued — @<authorHandle>","text":"<note text>\n\nQueued for async render + auto-publish. <PICK.publication>"}'
-```
+Do NOT send any "queued" success notify — Daniel only wants ONE Telegram message: the finished reel, which the substack-mcp worker delivers when the render is done. Silently enqueue and exit. (The failure notify earlier in this skill still fires on hard errors so failures are not silent.)
 
 Print a one-line summary and exit. Do NOT commit, do NOT open PRs, do NOT use any connector other than substack-mcp.
