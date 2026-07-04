@@ -6,7 +6,7 @@ description: |
 
 # substack-daily-pipeline (v3.2 — conversion-driven, notes-only, image-per-note)
 
-**Co se změnilo proti v2:** zahozeny restacky / komentáře / self-restack / feed_pool / promo-batch (Daniel dělá engagement ručně — automatizace nekonvertovala). Zůstávají **3 originální Notes/den**, cílené na formáty, které jako jediné reálně přiváděly subscribery. **v3.1:** každá note má branded grafiku (`imageSpec` → grownote render při publishu) a skill umí `auto` mód pro cloud routinu (bez acku).
+**Co se změnilo proti v2:** zahozeny restacky / komentáře / self-restack / feed_pool / promo-batch (Daniel dělá engagement ručně — automatizace nekonvertovala). Zůstávají **3 originální Notes/den**, cílené na formáty, které jako jediné reálně přiváděly subscribery. **v3.1:** každá note má branded grafiku (`imageSpec` → grownote render při publishu) a skill umí `auto` mód pro cloud routinu (propose-only od 2026-07-04 — navrhne + čeká na `ok`, viz sekce auto mode).
 
 **v3.2 (2026-06-15, evidence-based upgrade — deep research 100 agentů, 25 claimů → 5 přežilo adversariální verify):** (1) přidán hard gate **specificity opener** — note otevírá konkrétním číslem / pojmenovaným detailem / specifickým výsledkem (research: specificity opener konvertuje ~20× víc než vague, analýza 9 641 notes 3.13 vs 0.15 subs); (2) word-gate dolní hranice **17 → 25** (sweet spot 31–60); (3) A1 přerámován — story už NENÍ "garantovaně nejlepší engagement"; engagement ≠ conversion, story musí nést konkrétní kotvící specifikum; (4) **fact-check zpřísnější** — každé číslo z verified zdroje (`get_aggregates` / `get_content_insights` / mem0 / dcw-hub), jinak číslo VYNECH, nikdy nevymýšlej; (5) nová sekce **Redraft protocol** pro deterministický Telegram/remote redraft jedné konkrétní noty. Kill-pattern gaty (no link / question-hook / imperative / filler) research POTVRDIL — drží beze změny.
 
@@ -151,22 +151,52 @@ End: **"Pošli `ok` / `drop N` / `edit N <text>` / `stop`."**
 
 Cron `scheduledItemsCron` v grownote (1 min) auto-publikuje v `scheduledFor`.
 
-## Cloud / autonomous mode (`auto`)
+## Cloud / autonomous mode (`auto` = PROPOSE-ONLY)
+
+> **Zákon (rozhodnutí 2026-07-02, potvrzeno 2026-07-04):** cloud routina **NIKDY neplánuje ani nepublikuje bez Danielova explicitního schválení.** Auto mód = **navrhni a čekej**, ne "naplánuj a oznam po faktu". `schedule_note` v auto módu je ZAKÁZÁN — volá se až po Danielově `ok` (řídí to `substack-redraft-watch`).
 
 Když je skill invokován s argem `auto` (denní cloud routina, ne interaktivní):
-- **Přeskoč ack-gate** (krok 6 výstup + čekání) — rovnou naplánuj všechny 3 notes (krok 7 `ok` větev) hned po light review.
+- **NEPLÁNUJ.** Připrav 3 notes (draft → gaty → fact-check → light review) přesně jako v interaktivním módu, ale **nevolej `schedule_note`** ani žádný publish. Výstupem je **návrh**, ne naplánovaná nota.
 - **Zdroje jen cloud-safe**: mem0 + `get_aggregates` + `list_articles` + dcw-context-hub. **Přeskoč lokální `git log`** (cloud stroj repo nemá) — milestones ber z `get_aggregates` (sub delta) + nejnovějšího článku + mem0 decisions.
 - Fact-check gate platí dál (mem0 + dcw-context-hub). Když ❌ contradicts a nejde auto-rewritnout do gatů → tu notu **dropni** (radši 2 notes než halucinace), zaloguj.
-- Po naplánování pošli **Telegram preview se sloty** přes `send_telegram_message` (tool čte token z env sám) — formát pro redraft referenci:
+- **Zapiš návrh do pending souboru** (Write tool) `%USERPROFILE%\foundary-tools\dcw-context-hub\ops\substack-daily-notes-pending.json` — přepiš celý soubor tímto tvarem (to je jediný zdroj pravdy pro schvalovací krok; `substack-redraft-watch` z něj plánuje po `ok`):
+  ```json
+  {
+    "date": "<YYYY-MM-DD>",
+    "createdIso": "<ISO now>",
+    "status": "proposed",
+    "notes": [
+      { "slot": 1, "scheduledFor": "<ISO 08:30 CET>", "format": "milestone",     "angle": "<angle>", "content": "<CELÉ tělo noty 1>", "imageSpec": <obj|null>, "factCheck": "<zdroj/⚠️>", "dropped": false },
+      { "slot": 2, "scheduledFor": "<ISO 13:30 CET>", "format": "value_invite", "angle": "<angle>", "content": "<CELÉ tělo noty 2>", "imageSpec": <obj|null>, "factCheck": "<zdroj/⚠️>", "dropped": false },
+      { "slot": 3, "scheduledFor": "<ISO 19:30 CET>", "format": "pov",          "angle": "<angle>", "content": "<CELÉ tělo noty 3>", "imageSpec": <obj|null>, "factCheck": "<zdroj/⚠️>", "dropped": false }
+    ]
+  }
   ```
-  📝 Substack plán <YYYY-MM-DD>
-  1 · 8:30  story  "<prvních 60 znaků…>"
-  2 · 13:30 value  "<prvních 60 znaků…>"
-  3 · 19:30 pov    "<prvních 60 znaků…>"
-  Redraft: odpověz `redraft 2` (+ volitelně hint, např. `redraft 2 víc osobní`).
+  (Obsazené sloty z `list_scheduled_items` posuň na další volnou hodinu stejně jako v interaktivním módu a promítni do `scheduledFor`.)
+- Pak pošli **návrhový Telegram preview** přes `send_telegram_message` (tool čte token z env sám). Pro každou notu uveď slot + čas + archetyp label, **CELÉ tělo noty — NIKDY ne ořez / prvních N znaků / `…`** (Daniel schvaluje podle úplného textu; useknuté tělo je bug), řádek s grafikou (`🖼 stat_card: <stat>` / `🖼 quote_card: "<quote>"` / `🖼 text-only`) a fact-check řádek. Header nese počet subů z `get_aggregates`. Formát:
   ```
-  Číslování 1/2/3 = pořadí podle času = stabilní index pro `substack-redraft-watch` (čte `list_scheduled_items` seřazené podle `scheduledFor`). Pošli i ntfy souhrn (topic `daniel-substack`) jako dřív.
+  📝 Substack notes PROPOSAL — <YYYY-MM-DD> | <N> subs  (nic není naplánováno, čeká na tvoje ok)
+
+  1️⃣ 08:30 CET — Personal Story
+  "<CELÉ tělo noty 1>"
+  🖼 stat_card: <stat>
+  ✅ Fact-check: <zdroj>
+
+  2️⃣ 13:30 CET — Value + Invite
+  "<CELÉ tělo noty 2>"
+  🖼 stat_card: <stat>
+  ✅ Fact-check: <zdroj>
+
+  3️⃣ 19:30 CET — Contrarian POV
+  "<CELÉ tělo noty 3>"
+  🖼 text-only
+  ✅ Fact-check: <zdroj>
+
+  Odpověz "ok" (naplánuje všechny 3 na jejich sloty) · "edit N <text>" · "redraft N <hint>" · "drop N". Dokud nedáš ok, nic se nepublikuje.
+  ```
+  Číslování 1/2/3 = `slot` v pending souboru = stabilní index pro `substack-redraft-watch`. Pošli i ntfy souhrn (topic `daniel-substack`) jako dřív, ale formulace **"proposed, awaiting approval"**, ne "scheduled".
 - imageSpec se generuje stejně jako v interaktivním módu.
+- **Guarantee:** když cokoli selže (cookie expired, fact-check drop na 0 not, Write pending selže), **radši nenaplánuj nic** a oznam to na Telegram — bezpečný failure mode je „nic nepublikováno", ne „publikováno bez schválení".
 
 ## Redraft protocol (Telegram / remote — DETERMINISTICKÝ, sahej jen na jednu notu)
 
