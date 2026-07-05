@@ -54,19 +54,40 @@ vezmi další kandidát z Kroku 1. NIKDY vágní advice ("be consistent"). NIKDY
 - Mám-li chuť napsat název nástroje z infry nebo číslo z GPU/queue/modelu → STOP, to je signál že abstrakce z Kroku 1.5 selhala.
 - Žádný link v těle, žádné "check it out", žádné banned fráze.
 
+## Krok 3.5 — Branded step-card image (POVINNÁ příloha)
+
+Tutorial note se VŽDY publikuje s brandovaným step-card obrázkem (1080×1080, DCW
+styl) — renderuje ho substack-mcp server-side z `imageSpec`, žádný Codex/R2/upload.
+Postav `imageSpec` z draftu:
+
+```json
+{
+  "template": "steps_card",
+  "headline": "<3–7 slov, jádro principu; NE celý hook>",
+  "accentWord": "<1–2 slova z headline k obarvení oranžově, volitelné>",
+  "steps": ["<krok 1, ≤12 slov>", "<krok 2>", "<krok 3>", "<krok 4 volitelně>"]
+}
+```
+
+Pravidla: `steps` = 2–4 položky (víc se ořízne), každý krok krátká obecná akce (bez
+čísla na začátku — číslo dokresluje badge). `headline` ≠ první věta těla, ať se
+obrázek a text neopakují 1:1. Text v `steps` může být stručnější přeformulování
+kroků z těla note (obrázek = vizuální shrnutí, ne doslovná kopie). `imageSpec`
+předej do `schedule_note` (param `imageSpec`) ve fázi APPROVE.
+
 ## Krok 4 — HARD APPROVAL (dvoufázový flow, nic se nepublikuje bez Danielova OK)
 
 **Fáze DRAFT (ranní run):** note NEplánuj. Ulož pending draft do souboru
-(`ops/tutorial-note-pending.json` v dcw-context-hub: `{date, content, angle, topic_source}`)
-a pošli Telegram preview s textem note + instrukcí: *"Odpověz 'ok' pro publikaci
-dnes 16:00 CET, 'ne' pro zahození."* Angle = nejbližší label z 15 angle chips
+(`ops/tutorial-note-pending.json` v dcw-context-hub: `{date, content, angle, topic_source, imageSpec}`
+— `imageSpec` z Kroku 3.5) a pošli Telegram preview s textem note + instrukcí:
+*"Odpověz 'ok' pro publikaci dnes 16:00 CET, 'ne' pro zahození."* Angle = nejbližší label z 15 angle chips
 (typicky "Claude Code workflow", "AI tooling trade-off", "Article Forge",
 "Drippery", "Substack growth", "Postmortem").
 
 **Fáze APPROVE (odpolední run, ~15:00):** načti pending JSON (když není, skonči).
 Přes substack-mcp `get_recent_replies` (automation bot, webhook-persisted — NE
 `getUpdates`, ten 409) najdi Danielovu odpověď novější než draft: obsahuje-li "ok"/"ano"/"yes" → `schedule_note` (`content`, `scheduledFor` =
-dnes 16:00 CET; léto CEST `T14:00:00Z`, zima `T15:00:00Z`, `angle`) a zaloguj do
+dnes 16:00 CET; léto CEST `T14:00:00Z`, zima `T15:00:00Z`, `angle`, `imageSpec` z pending JSON) a zaloguj do
 mem0 `tutorial-note <YYYY-MM-DD>: <téma>` s metadata
 `{"project":"content","category":"fact"}`. Obsahuje-li "ne"/"skip" nebo žádná
 odpověď není → NIC neplánuj a pošli Telegram "tutorial note dnes přeskočena (bez
