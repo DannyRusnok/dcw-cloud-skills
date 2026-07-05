@@ -34,7 +34,7 @@ kokoro-js + Codex image gen, NO ComfyUI/Wan/RPK). It MUST run on the home PC
   `get_cookie_status`
 - article-forge: `create_article`, `get_article`, `update_article`
 - pc-mcp: `ping` (liveness)
-- Bash / SSH to `aivideo-pc` (see the `aivideo-pc-ssh` skill) to run the renderer
+- Bash / SSH to `aivideo-pc` (see the `homepc-ssh` skill) to run the renderer
 
 ## STEP 0 — preflight
 

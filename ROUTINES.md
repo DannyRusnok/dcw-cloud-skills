@@ -29,7 +29,7 @@ NIKDY v tomto public repu — skilly na ně odkazují jako `$NOTIFY_KEY` apod.
 ## PC scheduled tasks (mirror, běží lokálně na PC, ne claude.ai)
 
 - `tutorial-note-daily/SKILL.md`, `substack-daily-review/SKILL.md`, `article-to-reel-auto/SKILL.md`,
-  `medium-backfill/SKILL.md`, `aivideo-pc-ssh/SKILL.md`, `disk-cleanup/SKILL.md`.
+  `medium-backfill/SKILL.md`, `homepc-ssh/SKILL.md`, `disk-cleanup/SKILL.md`.
 - **RpkLaunchPipeline** (schtask, denně 9:07 CET) — `reel-kit-launch-pipeline/SKILL.md`.
   Přesunuto z claude.ai 2026-06-18 (vyčerpaný 15-run/den cap). Runner
   `dcw-context-hub/ops/reel-kit-launch-pipeline.cmd` fetchuje SKILL.md a běží cron/auto

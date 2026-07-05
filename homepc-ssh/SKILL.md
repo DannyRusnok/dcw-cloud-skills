@@ -1,9 +1,9 @@
 ---
-name: aivideo-pc-ssh
+name: homepc-ssh
 description: Jak se SPRÁVNĚ a hned napoprvé připojit přes SSH na Danielův home PC (Windows, RTX 3060, ComfyUI, Tailscale). Obsahuje ověřený host alias, username, klíč a Windows/PowerShell gotchas — aby se neopakovalo zdlouhavé debugování špatného hostu/usera. Použij kdykoli Daniel řekne: "ssh na PC", "připoj se na PC", "spusť něco na PC", "na home PC", "desktop-smcnedq", "aivideo-pc", "ovládej PC přes ssh", "remote na PC", nebo když jakýkoli jiný skill (medium-backfill, ComfyUI render) potřebuje běžet na PC. Aktivuj se i při frázích "to spusť na PC", "na tom druhém stroji".
 ---
 
-# aivideo-pc-ssh
+# homepc-ssh
 
 Ověřené připojení na Danielův home PC. **Nehádej host ani usera** — použij přesně tohle.
 

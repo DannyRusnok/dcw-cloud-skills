@@ -5,7 +5,7 @@ description: Audit VŠECH Danielových automatizací napříč dvěma běhovými
 
 # pc-routine-audit
 
-Inventura + diagnostika automatizací. **Default = reportuj, neměň.** Enable/disable/delete jen po explicitním OK per task. SSH na PC: `ssh -o BatchMode=yes aivideo-pc '<PowerShell>'` (skill `aivideo-pc-ssh`, host `100.113.86.52`, user `danie`, remote = PowerShell).
+Inventura + diagnostika automatizací. **Default = reportuj, neměň.** Enable/disable/delete jen po explicitním OK per task. SSH na PC: `ssh -o BatchMode=yes aivideo-pc '<PowerShell>'` (skill `homepc-ssh`, host `100.113.86.52`, user `danie`, remote = PowerShell).
 
 ## Krok 1 — Enumerace PC scheduled tasks
 
