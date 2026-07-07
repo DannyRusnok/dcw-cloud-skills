@@ -49,7 +49,7 @@ vezmi další kandidát z Kroku 1. NIKDY vágní advice ("be consistent"). NIKDY
 - Angličtina, first-person, jednoduchá engagement-grade EN. **Žádný kód, žádný tech žargon.**
 - **One sentence per line** (prázdný řádek mezi větami).
 - 40–100 slov. Hook = konkrétní outcome/princip, NE otázka ("Most people use AI like a search box. Here's the shift that doubled what I get out of it.").
-- Tělo = 2–4 očíslované kroky, každý krok obecná akce + relatable (ne-dev) příklad.
+- Tělo = 2–4 kroky, každý krok obecná akce + relatable (ne-dev) příklad. **BEZ pořadových čísel a BEZ odrážek** — každý krok jako samostatná věta na vlastním řádku (prázdný řádek mezi kroky). Pořadové číslo na začátku řádku Substack renderuje jako ordered-list a odsadí text — proto ne.
 - Závěr = "tohle zvládneš taky" beat (bez imperativní tip-šablony).
 - Mám-li chuť napsat název nástroje z infry nebo číslo z GPU/queue/modelu → STOP, to je signál že abstrakce z Kroku 1.5 selhala.
 - Žádný link v těle, žádné "check it out", žádné banned fráze.
