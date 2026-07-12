@@ -345,6 +345,15 @@ local ComfyUI. Mechanics are identical to `article-to-reel` Workflow B:
 
 Render scenes sequentially (single GPU). ~3-7 min/scene on the RTX 3060.
 
+**Wait for every ComfyUI render SYNCHRONOUSLY in the foreground** — a blocking
+poll loop (Python `time.sleep(15)` + GET `/history/<prompt_id>`, or repeated
+foreground Bash checks) that returns only once the scene MP4 is downloaded.
+NEVER launch the wait as a background task and NEVER end your turn to "wait
+for a background task notification": this is a headless `claude -p` run — the
+moment the turn ends the process exits, the worker finds no `RESULT_URL:` and
+flips the job to failed while ComfyUI is still rendering (incident 2026-07-12,
+job 80e09dda).
+
 ## Step 7 — Recompose with Wan backgrounds
 
 From `C:\Users\danie\article-forge`:
@@ -400,3 +409,6 @@ to `done`, and fires the ntfy notification. Do not print anything after it.
 - Never reuse a stale `article_videos` row — `render-byo-reel.ts` creates a
   fresh one per run.
 - Never end the run without printing `RESULT_URL:` or `FAILED:`.
+- Never wait for anything via background tasks / "task notifications" —
+  headless `-p` run ends (and the job fails) the moment you end your turn.
+  All waiting = blocking foreground poll loops.
