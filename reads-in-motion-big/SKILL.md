@@ -15,7 +15,7 @@ Async outreach routine. The slow render no longer runs inline — you ENQUEUE an
 substack-mcp worker drains the queue, renders, and posts. This never fails on a busy GPU or
 a restarting render server: the render just waits its turn in the queue.
 
-NOTIFY_KEY=3cebe32fb52d24f41f462aa793349b5d
+`NOTIFY_KEY` — klíč pro subhook Telegram relay. **NENÍ v tomto skillu** (public repo) — routine prompt ho dodá.
 
 ## Self-heal on Substack auth errors
 
