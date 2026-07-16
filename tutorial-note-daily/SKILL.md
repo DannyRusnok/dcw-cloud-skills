@@ -77,7 +77,9 @@ předej do `schedule_note` (param `imageSpec`) ve fázi APPROVE.
 
 ## Krok 4 — HARD APPROVAL (dvoufázový flow, nic se nepublikuje bez Danielova OK)
 
-**Fáze DRAFT (ranní run):** note NEplánuj. Ulož pending draft do souboru
+**Fáze DRAFT (ranní run):** note NEplánuj — volání `schedule_note`/`publish_note` je v této
+fázi ZAKÁZANÉ (jinak nota vyjde dvakrát: jednou z draftu, podruhé z approve — incident
+10.–16.7.2026). Ulož pending draft do souboru
 (`ops/tutorial-note-pending.json` v dcw-context-hub: `{date, content, angle, topic_source, imageSpec}`
 — `imageSpec` z Kroku 3.5) a pošli Telegram preview s textem note + instrukcí:
 *"Odpověz 'ok' pro publikaci dnes 16:00 CET, 'ne' pro zahození."* Angle = nejbližší label z 15 angle chips
@@ -85,6 +87,8 @@ předej do `schedule_note` (param `imageSpec`) ve fázi APPROVE.
 "Drippery", "Substack growth", "Postmortem").
 
 **Fáze APPROVE (odpolední run, ~15:00):** načti pending JSON (když není, skonči).
+Dedup guard: `list_scheduled_items` (note, dnešek) — pokud už dnes existuje scheduled/published
+nota se stejným textem, přeskoč (Telegram info + smaž pending JSON).
 Přes substack-mcp `get_recent_replies` (automation bot, webhook-persisted — NE
 `getUpdates`, ten 409) najdi Danielovu odpověď novější než draft: obsahuje-li "ok"/"ano"/"yes" → `schedule_note` (`content`, `scheduledFor` =
 dnes 16:00 CET; léto CEST `T14:00:00Z`, zima `T15:00:00Z`, `angle`, `imageSpec` z pending JSON) a zaloguj do
