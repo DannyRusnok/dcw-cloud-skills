@@ -19,6 +19,7 @@ description: |
 - **Čísla VÝHRADNĚ z E-bloku, přepis znak-po-znaku** (v3.5 krok 2.5 + gate 4). Žádné číslo mimo E-blok, žádné zaokrouhlování.
 - Fact-cooldown: `ops/substack-v4-facts-log.json` (`{facts:[{value,context,usedOn}]}`) — stejné číslo/stat max 1×/7 dní; po naplánování noty zapiš použitá čísla.
 - **Trvale zakázané anchory (Daniel 2026-07-23):** čísla z 401-notes analýzy (401 not, 7 konvertujících, 5 956 impressions, 0.13 %) jsou vyjetá z v3.5 — NIKDY je nepoužívej v žádném slotu, bez ohledu na cooldown.
+- **No-repeat gate (HARD, Daniel 2026-07-23 — noty se NESMÍ opakovat):** před scheduluj slotu 2/3 zavolej `list_recent_notes({limit:30})` a srovnej draft s originály za posledních 30 dní — stejné téma, stejný typ anchoru (např. "reels rendered overnight") nebo podobná otevírací věta = přepiš na jiný zdroj čísel, a když žádný jiný není, slot vynech. Opakování je horší outcome než chybějící nota.
 
 ## Slot 1 — 08:30 — Numbered série (BEZ AI, BEZ review)
 
@@ -46,7 +47,8 @@ description: |
 1. `mcp__article-forge__list_articles` → nejnovější článek publikovaný ≤7 dní.
 2. Vyber nejsilnější VĚTU z těla (doslova). **Mechanický substring check:** normalizuj tělo (strip HTML tagy, dekóduj entity, collapse whitespace) a ověř, že quote je přesný substring. Nesedí → zkus jinou větu; žádná nesedí → skip (a) a spadni na (b).
 3. Nota = quote (v uvozovkách) + max 1 rámující věta + `articleId` + `ctaType:"promo"`. `format:"value_invite"`.
-4. Žádný článek ≤7 dní → spadni na (b).
+4. **Jeden článek = max 1 quote nota za život.** Zkontroluj `usedQuoteArticles` v `ops/substack-v4-state.json`; už použitý článek přeskoč (i kdyby byl jediný ≤7 dní), po naplánování `articleId` do pole zapiš.
+5. Žádný nepoužitý článek ≤7 dní → spadni na (b).
 
 **Sudý den = (b) Contrarian z opinions banku:**
 1. `secondbrain/notes-opinions-bank.md` → první řádek `OK |`, který není v `substack-v4-state.json.usedOpinions`.
