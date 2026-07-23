@@ -22,6 +22,20 @@ Tone: konkrétně, bez chvály, bez bullet-smogu. Připouštěj nejistotu u spar
    → 2–3 klíčové decisions/discoveries týdne; `mem0_search({query:"weekly ceo report numbers"})`
    → minulé snapshot číslo pro delty.
 5. **dcw-context-hub** — `get_recent_sessions` → co se reálně dělalo (volitelné, max 5 sessions).
+6. **Gumroad MCP** (connector `gumroad-mcp`, vše read-only GET):
+   - `sales_summary({after:<T-7>, before:<dnes>})` → tento týden: sale count, gross USD,
+     refunds, breakdown per product.
+   - `sales_summary({after:<T-14>, before:<T-7>})` → minulý týden pro WoW deltu.
+   - `list_sales({after:<T-7>})` → net (per sale `price − gumroad_fee`, sečti; přeskoč
+     `price: 0` freebie řádky) + referrer breakdown (pole `referrer`, normalizuj na doménu:
+     substack.com, gumroad.com, direct…). Volej jen když týden má aspoň 1 sale.
+   - `list_products()` → lifetime totals: `sales_count` + `sales_usd_cents` per produkt.
+   - `get_earnings` NEVOLAT — účet vrací HTTP 403 "Tax center is not enabled" (ověřeno 2026-07-23).
+   Pokud routine nemá Gumroad connector: sekci vynech s poznámkou "(Gumroad zdroj nedostupný
+   — přidej gumroad-mcp connector na routinu)". Headless fallback (PC `claude -p` bez MCP):
+   REST `GET https://api.gumroad.com/v2/sales?after=YYYY-MM-DD` +
+   `GET https://api.gumroad.com/v2/products` s hlavičkou `Authorization: Bearer $GUMROAD_ACCESS_TOKEN`
+   (token už žije v gumroad-mcp secrets / Fly env — čti ho z env, NIKDY ho nevypisuj do reportu ani logu).
 
 Když kterýkoli zdroj selže: sekci vynech s poznámkou "(zdroj nedostupný)", neblokuj report.
 
@@ -41,6 +55,11 @@ SUBSTACK: <subs> subs (<+7d> týden, <+30d> měsíc) — cíl 700: <pct>%
   top note: <prvních 50 znaků> (<likes/restacks>)
 
 DRIPPERY: <total> subscribers napříč <N> sériemi (<+delta> týden)
+
+GUMROAD: <N> sales / $<gross> gross, $<net> net (<±N sales / ±$gross> vs minulý týden)
+  per product: <name> ×<n> ($<gross>) · <name> ×<n> ($<gross>) / žádný prodej
+  referrers (7d): <substack.com ×n · direct ×n · …> / n/a (bez prodejů)
+  lifetime: <N> sales / $<gross> — top: <produkt> ($<gross>)
 
 CO FUNGOVALO: <1–2 řádky z insights recommendations — jen actionable>
 CO UMŘELO: <1 řádek, nebo "nic výrazného">
@@ -62,7 +81,8 @@ Pravidla:
 ## Persist + delivery
 
 1. `mem0_add`: "Weekly CEO report <datum>: Medium <views>/7d $<earn>, Substack <subs>,
-   Drippery <subs> subscribers. Top: <title>. Doporučení: <1 věta>."
+   Drippery <subs> subscribers, Gumroad <N> sales/$<gross> 7d (lifetime $<gross>).
+   Top: <title>. Doporučení: <1 věta>."
    `{project:"secondbrain", category:"fact"}` — slouží jako baseline pro delty příště.
 2. Pošli report přes grownote MCP `send_telegram_message({text:<report>})`.
 3. Pokud Telegram selže a routine má `NOTIFY_KEY`: fallback
@@ -71,5 +91,7 @@ Pravidla:
 
 ## Guardrails
 - Read-only všude (žádné schedule_note, žádné create_series, žádné update_article).
+- Gumroad: jen read tooly (`sales_summary`, `list_sales`, `list_products`) — nikdy
+  `update_product`, `create_offer_code`, `refund_sale` apod. Žádné tokeny v outputu.
 - Žádné výmysly čísel — co není v tool response, to v reportu není.
 - Max 1 mem0_add (snapshot), žádný spam.
