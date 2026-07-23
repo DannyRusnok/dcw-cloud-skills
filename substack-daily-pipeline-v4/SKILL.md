@@ -21,7 +21,7 @@ description: |
 
 ## Slot 1 — 08:30 — Numbered série (BEZ AI, BEZ review)
 
-Řeší **`ops/substack-v4-slot1.mjs`** (spouští ho v4 runner .cmd PŘED tímto skillem). Deterministický: další pending entry z `secondbrain/notes-series-bank.md` (střídá S1/S2 podle počtu odeslaných), verbatim POST na grownote `/api/mcp/schedule-note`, stav v `ops/substack-v4-state.json` (lokální na PC).
+Řeší **`ops/substack-v4-slot1.mjs`** (spouští ho v4 runner .cmd PŘED tímto skillem). Deterministický: další pending entry z `secondbrain/notes-series-bank.md` (střídá S1/S2 podle počtu odeslaných), verbatim INSERT do `grownote.notes_log` (Fly PG přes PC WireGuard, `postgres` modul z article-forge checkoutu; publish dělá substack-mcp worker publishDue), stav v `ops/substack-v4-state.json` (lokální na PC).
 
 **Tento skill slot 1 NEDRAFTUJE, NEEDITUJE a NEREVIEWUJE.** Jediné dovolené interakce:
 - Do FYI zprávy (krok 5) přidej řádek co slot 1 poslal (přečti `substack-v4-state.json`).
