@@ -18,6 +18,7 @@ description: |
 - `angle` povinný z `grownote/lib/angles.ts`.
 - **Čísla VÝHRADNĚ z E-bloku, přepis znak-po-znaku** (v3.5 krok 2.5 + gate 4). Žádné číslo mimo E-blok, žádné zaokrouhlování.
 - Fact-cooldown: `ops/substack-v4-facts-log.json` (`{facts:[{value,context,usedOn}]}`) — stejné číslo/stat max 1×/7 dní; po naplánování noty zapiš použitá čísla.
+- **Trvale zakázané anchory (Daniel 2026-07-23):** čísla z 401-notes analýzy (401 not, 7 konvertujících, 5 956 impressions, 0.13 %) jsou vyjetá z v3.5 — NIKDY je nepoužívej v žádném slotu, bez ohledu na cooldown.
 
 ## Slot 1 — 08:30 — Numbered série (BEZ AI, BEZ review)
 
