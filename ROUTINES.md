@@ -15,7 +15,7 @@ NIKDY v tomto public repu — skilly na ně odkazují jako `$NOTIFY_KEY` apod.
 | Reads in Motion - big newsletters | `reads-in-motion-big/SKILL.md` | 5×/den (07:11, 11:11, 14:11, 18:11, 21:11) | NOTIFY_KEY | substack-mcp, pc-mcp |
 | Reels from top foreign articles (RPK outreach) | `rpk-outreach-reels/SKILL.md` | 3×/den (07:13, 13:13, 19:13) | NOTIFY_KEY | substack-mcp, pc-mcp |
 | ~~Reel Pipeline Kit launch notes~~ → přesunuto na PC (viz níže) | `reel-kit-launch-pipeline/SKILL.md` | — | NOTIFY_KEY | substack-mcp, pc-mcp, mem0, dcw-context-hub |
-| Substack auto-like | `substack-auto-like/SKILL.md` | 5×/den | NOTIFY_KEY | substack-mcp |
+| ~~Substack auto-like~~ → přesunuto na PC (viz níže) | `substack-auto-like/SKILL.md` | — | NOTIFY_KEY | substack-mcp |
 | mem0 weekly consolidation | `mem0-weekly-consolidation/SKILL.md` | NE 09:00 CEST | NOTIFY_KEY, HEARTBEAT_TOKEN | mem0, dcw-context-hub (optional) |
 | Substack daily notes v3.1 | `substack-daily-pipeline/SKILL.md` | 1×/den ráno, auto mode | NOTIFY_KEY | substack-mcp, mem0, article-forge, dcw-context-hub |
 | newsletter digest | `newsletter-digest/SKILL.md` | 1×/den 06:00 CET | NOTIFY_KEY | Gmail, dcw-context-hub (Notion proxy), mem0 |
@@ -37,7 +37,9 @@ NIKDY v tomto public repu — skilly na ně odkazují jako `$NOTIFY_KEY` apod.
 - **SubstackAutoLike** (schtask, 5×/den 6:37/9:37/12:37/15:37/18:37 CET, jeden task
   `/sc daily /st 06:37 /ri 180 /du 0012:00`) — `substack-auto-like/SKILL.md`. Přesunuto
   z claude.ai 2026-06-18 (15-run/den cap). Runner `dcw-context-hub/ops/substack-auto-like.cmd`
-  fetchuje SKILL.md (Sonnet, zdarma na subscription). Cloud routinu po ověření vypnout.
+  fetchuje SKILL.md (Sonnet, zdarma na subscription). Cloud routine vypnutá (ověřeno
+  2026-07-26) — PC schtask je jediný běžící zdroj. Od 2026-07-26 mutual-recommendation-first
+  s deterministickým bucketem (index % 5 === runIndex), cap 7 likes/run.
 - **SubstackDailyNotes** (schtask, denně 7:15 CET) — `substack-daily-pipeline/SKILL.md` v `auto`
   mode pro target_date=TODAY. Přesunuto z claude.ai 2026-06-18 (15-run/den cap). Runner
   `dcw-context-hub/ops/substack-daily-notes.cmd` fetchuje SKILL.md + inline fallback (Sonnet,
