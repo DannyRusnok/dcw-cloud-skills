@@ -44,10 +44,10 @@ description: |
 ## Slot 3 — 19:30 — střídavě podle dne v měsíci
 
 **Lichý den = (a) Verbatim quote promo:**
-1. `mcp__article-forge__list_articles` → nejnovější článek publikovaný ≤7 dní.
+1. `curl -s "https://danielrusnok.substack.com/api/v1/archive?sort=new&limit=10"` → nejnovější post s `post_date` ≤7 dní. (**NE `list_articles`** — AF Substack statusy se neudržují a novější posty tam nejsou; Substack je zdroj pravdy.) Tělo vezmi z `canonical_url`.
 2. Vyber nejsilnější VĚTU z těla (doslova). **Mechanický substring check:** normalizuj tělo (strip HTML tagy, dekóduj entity, collapse whitespace) a ověř, že quote je přesný substring. Nesedí → zkus jinou větu; žádná nesedí → skip (a) a spadni na (b).
-3. Nota = quote (v uvozovkách) + max 1 rámující věta + `articleId` + `ctaType:"promo"`. `format:"value_invite"`.
-4. **Jeden článek = max 1 quote nota za život.** Zkontroluj `usedQuoteArticles` v `ops/substack-v4-state.json`; už použitý článek přeskoč (i kdyby byl jediný ≤7 dní), po naplánování `articleId` do pole zapiš.
+3. Nota = quote (v uvozovkách) + max 1 rámující věta + link na `canonical_url` + `ctaType:"promo"`. `format:"value_invite"`.
+4. **Jeden post = max 1 quote nota za život.** Zkontroluj `usedQuoteArticles` v `ops/substack-v4-state.json`; už použitý post přeskoč (i kdyby byl jediný ≤7 dní), po naplánování zapiš do pole jeho `canonical_url` (starší záznamy jsou AF `articleId` — porovnávej proti oběma tvarům).
 5. Žádný nepoužitý článek ≤7 dní → spadni na (b).
 
 **Sudý den = (b) Contrarian z opinions banku:**
