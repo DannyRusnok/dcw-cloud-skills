@@ -19,6 +19,14 @@ Tři rychleji rostoucí Substacky ve stejné nice (Finn Tropy ~1k subs / 4,7k fo
 
 ---
 
+## 0.5 Project liveness check (POVINNÉ, před vším ostatním)
+
+Než napíšeš první větu draftu, ověř přes `mem0_search` stav KAŽDÉHO Danielova projektu, který se v textu objeví: žije / zabito / pozastaveno, a od kdy.
+
+- **Publikované starší Substack posty nejsou zdroj pravdy o současnosti.** Popisují stav v den vydání. Projekt zmíněný v postu z července může být v září mrtvý.
+- Známé případy: **Reads in Motion (RiM) — zabito 2026-08-12** (rutiny vypnuté 08-10 kvůli riziku copyrightu a banu účtu). Nezmiňovat v nových postech, bio ani footeru.
+- Když je projekt mrtvý, nepřepisuj jeho starou pointu do přítomného času. Buď ho z textu vyhoď, nebo napiš, že skončil a proč.
+
 ## 1. Volba formátu — vyber JEDEN primární, data rozhodují
 
 | Formát | Kdy | Data |
