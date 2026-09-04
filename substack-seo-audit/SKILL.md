@@ -86,9 +86,13 @@ mcp__substack-mcp__set_post_meta(postId=<id>, seoTitle="…", seoDescription="�
 `account` param vynech pro danielrusnok, `'readsinmotion'` pro RiM.
 
 Poznámky:
-- `set_post_meta` míří na draft entity; publikovaný post je stále draft s `is_published=true`,
-  takže zápis prochází. **Ověř první post samostatně** a znovu stáhni archive API, jestli se
-  hodnota propsala, než pustíš batch.
+- `set_post_meta` na publikovaný post **funguje** (ověřeno 2026-09-04 na 15 postech) — publikovaný
+  post je pořád draft entity s `is_published=true`.
+- **Archive API výsledek necachuje okamžitě.** Po zápisu vrací `/api/v1/archive` ještě dlouho
+  starou hodnotu (i `null`). Neznamená to, že zápis selhal. Ověřuj proti HTML stránce postu:
+  `curl https://<pub>.substack.com/p/<slug>` a hledej `search_engine_title\":\"…` v inline JSON.
+- Při ověřování dekóduj `\uXXXX` escapes — `€` se v HTML objeví jako `\u20AC` a naivní porovnání
+  řetězců hlásí falešný FAIL.
 - Nikdy neměň `slug` u publikovaného postu — rozbiješ existující odkazy a Substack
   neredirectuje.
 - Po batchi spusť audit znovu a nahlas diff.
