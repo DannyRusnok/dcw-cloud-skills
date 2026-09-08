@@ -11,7 +11,6 @@ description: >
 
 **Inputs from the routine prompt (NOT in this file — public repo):**
 - `NOTIFY_KEY` — subhook Telegram relay key. If missing, skip the Telegram step.
-- `HEARTBEAT_TOKEN` — craft-os Infra Fleet Bearer token. If missing, skip the heartbeat.
 
 CONTEXT (infra v3, 2026-06-11): the index holds ~2000+ memories (incl. a one-time
 backfill of 384 historical sessions). NEVER pull full entries — always use compact mode.
@@ -85,16 +84,7 @@ If the dcw-context-hub MCP tool `log_session` is available, call it with
 session_id `mem0-weekly-consolidation-<YYYY-MM-DD>`, machine `claude-ai-routine`,
 recap = the summary text. If unavailable, skip silently.
 
-## STEP 8 — craft-os Infra Fleet heartbeat via Bash (ALWAYS, even on zero activity)
-
-```
-curl -s -m 10 -X POST 'https://craft-os.fly.dev/api/heartbeat' -H "Authorization: Bearer $HEARTBEAT_TOKEN" -H 'Content-Type: application/json' -d '{"unit":"mem0-weekly-consolidation","status":"ok"}'
-```
-
-On fatal error (mem0 unreachable, cap logic broken): same curl with `"status":"fail"`,
-then still print whatever summary you have.
-
-## STEP 9 — Print the summary to stdout. Exit.
+## STEP 8 — Print the summary to stdout. Exit.
 
 ## DO NOT
 
