@@ -60,7 +60,7 @@ description: |
 
 Pro slot 2 a 3: `mcp__substack-mcp__schedule_note({content, scheduledFor, format, angle, imageSpec?, articleId?, ctaType?})` rovnou (obsazený slot → +1 h). Ulož `scheduledItemId`. Grownote cron publikuje v čase slotu. *(Změna proti v3.5 zákonu propose-only: rozhodnutí Daniela 2026-07-23 — slot 2+3 jsou mechanicky ukotvené, review nahrazuje opt-out okno do času publikace.)*
 
-## 5. FYI na Craftie (ne approval — auto-publish s opt-outem)
+## 5. FYI na Telegram (ne approval — auto-publish s opt-outem)
 
 Jedna zpráva `mcp__substack-mcp__send_telegram_message({text, register:"passive"})` s CELÝMI těly (nikdy ořez):
 

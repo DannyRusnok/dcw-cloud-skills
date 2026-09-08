@@ -11,7 +11,7 @@ Org: `personal` (jediná). CLI `flyctl` (`/opt/homebrew/bin/flyctl`) na Macu je 
 
 ## Co NIKDY nenavrhovat vypnout (prod cesty)
 
-- **substack-mcp** — webhook router pro VŠECHNY Telegram boty (REELS/OPS/THREADS/Craftie/Gaia) + Substack automatizace + Inngest publishDue. `app` i `worker` process group musí žít. Stopped machines v `worker`/`app` skupině = normální autostop, NE mrtvola.
+- **substack-mcp** — webhook router pro @GaiaDcwBot (jediný Telegram bot) + Substack automatizace + Inngest publishDue. `app` i `worker` process group musí žít. Stopped machines v `worker`/`app` skupině = normální autostop, NE mrtvola.
 - **article-forge** — prod content app + čte Fly PG, enqueue video_jobs.
 - **dcw-foundary-pg** — kanonická Postgres DB (articleforge schema, video_jobs queue). Nikdy.
 - **drippery** / **drippery-mcp** — prod SaaS (push = deploy, viz [[feedback_drippery_prod_push]]).
