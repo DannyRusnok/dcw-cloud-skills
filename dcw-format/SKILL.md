@@ -99,7 +99,7 @@ Sedm Substacků s 20k+ subs (Lenny, Pragmatic Engineer, ByteByteGo, Refactoring,
 
 | # | Vzor | Kdo (z 7) | Danielova verze |
 |---|---|---|---|
-| 1 | **Identitní hlavička jako 1. blok za coverem** — kdo, co, kadence, Subscribe button; doslovně stejná v každém postu; JEDEN řádek, ne callout (jednořádek hook pod fold neodsune) | Lenny 4/4, Pragmatic 2/3, Refactoring 3/3, PwA 3/3 | `Hey, Daniel here — every week I show how one text becomes a finished video with AI roles, next to a full-time job.` + `<sub-subscribe/>` |
+| 1 | **Identitní hlavička jako 1. blok za coverem** — kdo, co, kadence, Subscribe button; doslovně stejná v každém postu; JEDEN řádek, ne callout (jednořádek hook pod fold neodsune) | Lenny 4/4, Pragmatic 2/3, Refactoring 3/3, PwA 3/3 | `👋 Hey, Daniel here. Every week I show how one text becomes a finished video with AI roles, next to a full-time job. Free, weekly.` (obyčejný `<p>`, bez kurzívy/centrování) + `<sub-subscribe caption=""/>` (prázdný caption, jinak widget centruje druhý řádek) |
 | 2 | **CTA jako Substack button, ne inline link** | 6/7 | subscribe top + end jako widget; promo linky v textu redukovat |
 | 3 | **Fixní patička se sociálním důkazem v čísle** („170K+ engineers", „399 joined since last week") | 5/7 | `<N> builders read this. If it saved you an evening, subscribe below.` — číslo z `get_aggregates.subscriber_count`, měnit jen číslo |
 | 4 | **Explicitní share/forward ask s mechanismem** | Lenny, PwA, Mollick, Pragmatic | Substack template `47377` „Share" = řádek `Forward this to the one dev on your team who still edits videos by hand.` + nativní Share button |
