@@ -93,6 +93,28 @@ Nula citací v AI odpovědi na konkrétní formulaci může znamenat nulovou pop
 
 ---
 
+## 8. Post shell — pevná kostra kolem textu (data 2026-09-08)
+
+Sedm Substacků s 20k+ subs (Lenny, Pragmatic Engineer, ByteByteGo, Refactoring, One Useful Thing, Latent Space, Product with Attitude), 3 nejnovější free posty z každé, měřeno z API. Pět vzorů, které mají ≥4/7 a Daniel je do 09/2026 neměl:
+
+| # | Vzor | Kdo (z 7) | Danielova verze |
+|---|---|---|---|
+| 1 | **Identitní hlavička jako 1. blok za coverem** — kdo, co, kadence, Subscribe button; doslovně stejná v každém postu; JEDEN řádek, ne callout (jednořádek hook pod fold neodsune) | Lenny 4/4, Pragmatic 2/3, Refactoring 3/3, PwA 3/3 | `Hey, Daniel here — every week I show how one text becomes a finished video with AI roles, next to a full-time job.` + `<sub-subscribe/>` |
+| 2 | **CTA jako Substack button, ne inline link** | 6/7 | subscribe top + end jako widget; promo linky v textu redukovat |
+| 3 | **Fixní patička se sociálním důkazem v čísle** („170K+ engineers", „399 joined since last week") | 5/7 | `<N> builders read this. If it saved you an evening, subscribe below.` — číslo z `get_aggregates.subscriber_count`, měnit jen číslo |
+| 4 | **Explicitní share/forward ask s mechanismem** | Lenny, PwA, Mollick, Pragmatic | `Forward this to the one dev on your team who still edits videos by hand.` (+ Share button v editoru) |
+| 5 | **Promo míří na vlastní ne-newsletterový asset** (nástroj, skill, feature, kniha), ne na subscribe | 6/7 | P.S. odkazuje na konkrétní artefakt (RPS feature, skill, skript), ne obecně „waitlist" |
+
+**Dva counter-nálezy — pravidla, která na 20k+ datech NESTOJÍ:**
+- **TL;DR kurzívou nahoře je menšina (2/7).** Kde nahoře něco je (Pragmatic, ByteByteGo), je to *agenda v odrážkách zrcadlená číslovanými H2* („Today, we cover:"). Lenny, Mollick, Latent Space začínají rovnou tezí. → Pravidlo: **how-to a listicle = agenda-callout, jehož odrážky = číslované H2; case study a esej = žádný TL;DR, začít tezí.** Kurzívové shrnutí se nepoužívá.
+- **„What you might have missed" blok je menšina (2/7)** — to je PwA/Refactoring, ne norma. Velké puby linkují vlastní posty inline do vět (Pragmatic medián 9). Danielových 4–6 inline odkazů je v normě; nezvyšovat na úkor bloku.
+
+Kostra postu (závazné pořadí, implementuje `substack-post-finalize`):
+```
+cover figure → identitní řádek + subscribe → [agenda-callout | nic] → hook → tělo (hr před každým H2) →
+restack řádek → hr → P.S. (artefakt) → share řádek → patička s číslem → <sub-template id="18350"/>
+```
+
 ## Format Brief (šablona — výstup tohoto modulu)
 
 ```
@@ -108,6 +130,8 @@ Beat anchor:     <1 věta entity anchor>
 Povrch:          Substack (free) → Medium plnotext ≤48h | + YouTube video? ano/ne
 GEO cíl:         ChatGPT/Perplexity dotaz: "<…>"
 Cíl metriky:     open/like/restack/citace   (ne subs)
+TL;DR forma:     agenda (how-to/listicle) | žádný (case study/esej)
+P.S. artefakt:   <konkrétní skill / feature / skript, na který P.S. odkazuje>
 ```
 
 ## Zdroje (načteno 2026-09-04)
