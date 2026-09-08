@@ -99,7 +99,7 @@ Sedm Substacků s 20k+ subs (Lenny, Pragmatic Engineer, ByteByteGo, Refactoring,
 
 | # | Vzor | Kdo (z 7) | Danielova verze |
 |---|---|---|---|
-| 1 | **Identitní hlavička jako 1. blok za coverem** — kdo, co, kadence, Subscribe button; doslovně stejná v každém postu; JEDEN řádek, ne callout (jednořádek hook pod fold neodsune) | Lenny 4/4, Pragmatic 2/3, Refactoring 3/3, PwA 3/3 | `👋 Hey, Daniel here. Every week I show how one text becomes a finished video with AI roles, next to a full-time job. Free, weekly.` (obyčejný `<p>`, bez kurzívy/centrování) + `<sub-subscribe caption=""/>` (prázdný caption, jinak widget centruje druhý řádek) |
+| 1 | **Identitní hlavička jako 1. blok za coverem** — kdo, co, kadence, Subscribe button; doslovně stejná v každém postu; JEDEN řádek, ne callout (jednořádek hook pod fold neodsune) | Lenny 4/4, Pragmatic 2/3, Refactoring 3/3, PwA 3/3 | `<sub-template id="47388"/>` (template „introduction of myself" = subscribe widget s captionem `👋 Hey, Daniel here. Every week I show how one text becomes a finished video with AI roles, next to a full-time job. Free, weekly.`). Znění se mění JEN v template editoru, ne v postu |
 | 2 | **CTA jako Substack button, ne inline link** | 6/7 | subscribe top + end jako widget; promo linky v textu redukovat |
 | 3 | **Fixní patička se sociálním důkazem v čísle** („170K+ engineers", „399 joined since last week") | 5/7 | `<N> builders read this. Subscribe below and the Article-to-Reel Playbook, the exact pipeline behind these posts, lands in your welcome email.` + `<sub-subscribe caption=""/>` — číslo z `get_aggregates.subscriber_count`. **Bio callout dole se už nevkládá** (identita je v hlavičce; dvě identity = dva subscribe asky za sebou) |
 | 4 | **Explicitní share/forward ask s mechanismem** | Lenny, PwA, Mollick, Pragmatic | Substack template `47377` „Share" = řádek `Forward this to the one dev on your team who still edits videos by hand.` + nativní Share button |
@@ -111,7 +111,7 @@ Sedm Substacků s 20k+ subs (Lenny, Pragmatic Engineer, ByteByteGo, Refactoring,
 
 Kostra postu (závazné pořadí, implementuje `substack-post-finalize`):
 ```
-cover figure → identitní řádek + subscribe → [agenda-callout | nic] → hook → tělo (hr před každým H2) →
+cover figure → <sub-template id="47388"/> (identita + subscribe) → [agenda-callout | nic] → hook → tělo (hr před každým H2) →
 restack řádek → hr → P.S. (artefakt) → share template 47377 → patička s číslem + subscribe widget (bez bio callout)
 ```
 
