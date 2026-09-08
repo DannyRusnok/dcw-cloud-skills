@@ -112,7 +112,7 @@ Sedm Substacků s 20k+ subs (Lenny, Pragmatic Engineer, ByteByteGo, Refactoring,
 Kostra postu (závazné pořadí, implementuje `substack-post-finalize`):
 ```
 cover figure → hr → <sub-template id="47388"/> (identita + subscribe) → [agenda-callout | nic] → hook → tělo (hr před každým H2) →
-restack řádek → hr → P.S. (artefakt; kurzíva, na střed) → „Go deeper" template 8836 (3 fixní odkazy: Playbook, RPS waitlist, YouTube) → share template 47377 → patička s číslem (kurzíva, na střed) + subscribe widget (bez bio callout)
+restack řádek → hr → P.S. (artefakt; kurzíva, na střed) → hr → H3 „Go deeper" + 3 fixní odkazy (Playbook, RPS waitlist, YouTube @DigitalCraftWorkshop) → hr → share template 47377 → hr → patička s číslem (kurzíva, na střed) + subscribe widget (bez bio callout). FINÁLNÍ 2026-09-08 — doslovný HTML v `substack-post-finalize/templates/post-skeleton.html`
 ```
 
 ## Format Brief (šablona — výstup tohoto modulu)
