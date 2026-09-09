@@ -110,3 +110,20 @@ Zoompan na stillech: vstup supersample na 3840×2160 a AKUMULOVANÝ zoom `z='min
 ## Post-publish distribuce
 
 Samostatný skill `anchor-essay-distribute` (RPS epizoda v digital-craft-workshop + YT komentář + note + embed do eseje). Tenhle skill končí u MP4 draftu.
+
+**Note s videem = nativní attachment, NIKDY jen YouTube odkaz** (Daniel, 2026-09-09).
+Odkaz v note je horší dosah — Substack přehraje video přímo ve feedu. Cesta:
+
+```
+cd ~/foundary-tools/article-forge && npx tsx scripts/up-mp4.ts <mp4>   # -> R2 URL
+upload_reel_video({ videoUrl, videoDurationSeconds })                  # -> jobId
+get_video_upload_status({ jobId })                                     # -> attachmentId (~15 s)
+publish_note({ content, attachmentId })
+```
+`scripts/up-mp4.ts` je jednorázový wrapper nad `uploadArticleVideo` z `lib/r2`
+(upload-video.ts vyžaduje existující `article_videos` řádek, na tohle se nehodí).
+Pozor: publikovanou note substack-mcp neumí smazat — pořadí kroků si rozmysli předem.
+
+**Embed do Substack postu**: `<sub-youtube id="<videoId>"/>` a `update_post_draft`
+s `republish: true` (u publikovaného postu se propíše živá verze, mail se neposílá).
+Umístit ZA hook / pull quote, ne nad něj.
