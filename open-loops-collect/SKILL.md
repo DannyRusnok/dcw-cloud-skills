@@ -12,14 +12,13 @@ description: |
 
 # open-loops-collect
 
-Output = 3 HTTP POSTs to `https://substack-mcp.fly.dev/api/loops/snapshot`, one per
+Output = 3 snapshot publishes (Substack MCP tool `publish_open_loops_snapshot`), one per
 source: `pygmalino`, `productfruits`, `rps`. Nothing else is written anywhere.
 No Telegram, no Notion writes, no Gmail changes, no git pushes.
 
 ## Config (from the routine prompt)
 
-- `LOOPS_INGEST_TOKEN` — bearer for the snapshot endpoint. Never print it. If missing,
-  stop and report.
+- `LOOPS_INGEST_TOKEN` — bearer for the HTTP snapshot endpoint (unused on the MCP path). Never print it.
 - Timezone for all "today" / weekday logic: **Europe/Prague**.
 - Daniel = Gmail `danielrusnok@gmail.com`, Slack user `U098B8E3M0V`,
   Notion user `241d872b-594c-818d-a3bb-0002f80e749b`.
@@ -72,15 +71,14 @@ Rules that the board relies on:
   `cards:[]`, `health:[{name, ok:false, note}]` — the board shows the failure
   instead of stale data.
 
-POST with:
-
-```bash
-curl -sS -X POST https://substack-mcp.fly.dev/api/loops/snapshot \
-  -H "Authorization: Bearer $LOOPS_INGEST_TOKEN" -H "Content-Type: application/json" \
-  --data @/tmp/loops-<source>.json
-```
-
-Expect `{"ok":true,...}`. On HTTP 401/400 report the body verbatim (minus the token).
+Publish each snapshot through the **Substack MCP connector** tool
+`publish_open_loops_snapshot` with `{ "snapshot": <the object above> }` — one call per
+source. Expect `{"ok":true,...}`; if it returns `ok:false`, report the `error` verbatim.
+The routine sandbox cannot reach `substack-mcp.fly.dev` over plain HTTPS (egress policy
+403), so **do not use curl** for this; the MCP tool is the only path. If the tool is not
+available in the session, say so in the run summary and stop — do not try other routes.
+`LOOPS_INGEST_TOKEN` is not needed for the MCP path (kept in the prompt only for a
+future direct-HTTP fallback).
 
 ## Source 1 — Pygmalino (Gmail)
 
@@ -104,6 +102,9 @@ Expect `{"ok":true,...}`. On HTTP 401/400 report the body verbatim (minus the to
    confirm price).
 7. `url` = `https://mail.google.com/mail/u/0/#inbox/<threadId>`.
 8. `health`: `{ name: "Gmail", ok: true, note: "<n> threads in 30 d", at }`.
+9. If the Gmail connector exposes no read tools (`search_threads` / `get_thread` missing —
+   find them with ToolSearch "Gmail" first), post the source with `ok:false`,
+   `error: "Gmail connector has no read tools"`, `cards: []` and move on. Do not stop the run.
 
 ## Source 2 — Product Fruits (Notion + Slack)
 
