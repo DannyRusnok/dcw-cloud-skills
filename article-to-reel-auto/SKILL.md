@@ -353,6 +353,10 @@ for a background task notification": this is a headless `claude -p` run — the
 moment the turn ends the process exits, the worker finds no `RESULT_URL:` and
 flips the job to failed while ComfyUI is still rendering (incident 2026-07-12,
 job 80e09dda).
+It happened again on 2026-09-25 (jobs 78a15d02, d6c8642b) despite this rule,
+so the worker now spawns `claude` with `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1`.
+Give each foreground poll a Bash timeout of 600000 ms and render one scene per
+call, so no single wait needs more than 10 minutes.
 
 ## Step 7 — Recompose with Wan backgrounds
 
