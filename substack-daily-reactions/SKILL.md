@@ -24,7 +24,7 @@ v této session (Claude app na mobilu). Vše přes konektor **substack-mcp**.
 ## Režim A — ranní běh (scheduled)
 
 ### A1. Stav poolu
-`reaction_pool` `{action:"list"}`. Zapamatuj si `total`, `eligibleNow` a `lastWeek`.
+`reaction_pool` `{action:"list"}` (volej ho samostatně, ne paralelně s A2). Zapamatuj si `total`, `eligibleNow` a `lastWeek`.
 Pokud `total < 60`, na konci výstupu přidej sekci **Rozšíření poolu** (viz A5).
 
 ### A2. Kandidáti
@@ -44,7 +44,8 @@ Vyřaď položky, ke kterým Daniel nemůže nic přidat:
 Po filtru se drž cíle: 3–5 postů a 10–20 notes. Když jich je méně, nevadí, kvalita má přednost před počtem.
 
 ### A4. Příprava položek
-U postů zkus `WebFetch` na URL a přečti si celý text. Když fetch selže, použij excerpt z `text`.
+U postů je celý čitelný text přímo v poli `text` kandidáta (server ho stáhl). `WebFetch` na
+publikační domény NEPOUŽÍVEJ, protože cloud egress proxy je blokuje.
 
 Každá položka má ID `P1…`, `N1…` nebo `D1…` (post / note / discovery) a tento formát:
 
@@ -67,7 +68,10 @@ obsahovat fakta o Danielovi, která neznáš. Když potřebuješ jeho zkušenost
 Pořadí: nejdřív posty, pak notes podle `score`, na konec discovery.
 
 ### A5. Rozšíření poolu (jen když total < 60, nebo v neděli)
-`discover_reaction_pool` `{source:"subscriptions", sample:40}` a pak `{source:"explore", sample:40}`.
+`discover_reaction_pool` `{source:"subscriptions", sample:25}`, a až **po jeho dokončení**
+`{source:"explore", sample:30}`. NIKDY je nevolej paralelně: Substack pak vrací 429 a
+výsledek je prázdný. Když obě volání vrátí 0 kandidátů, napiš jednu větu „discovery dnes
+nic nenašla (pravděpodobně rate limit)" a pokračuj.
 Proveď stejný filtr jako v A3 a ukaž max 15 kandidátů jako `C1…`, každého na jeden řádek:
 `C4 · @handle · 8k followers · <publikace> · <proč sedí, 6–10 slov česky>`.
 
