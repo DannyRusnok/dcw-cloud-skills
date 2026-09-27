@@ -69,7 +69,7 @@ Pořadí: nejdřív posty, pak notes podle `score`, na konec discovery.
 
 ### A5. Rozšíření poolu (jen když total < 60, nebo v neděli)
 `discover_reaction_pool` `{source:"subscriptions", sample:25}`, a až **po jeho dokončení**
-`{source:"explore", sample:30}`. NIKDY je nevolej paralelně: Substack pak vrací 429 a
+`{source:"explore", sample:15}`. NIKDY je nevolej paralelně: Substack pak vrací 429 a
 výsledek je prázdný. Když obě volání vrátí 0 kandidátů, napiš jednu větu „discovery dnes
 nic nenašla (pravděpodobně rate limit)" a pokračuj.
 Proveď stejný filtr jako v A3 a ukaž max 15 kandidátů jako `C1…`, každého na jeden řádek:
