@@ -94,8 +94,13 @@ Režim A NIC nepublikuje ani neplánuje.
 
 1. Rozparsuj odpověď. Položky, které nezmínil, přeskoč.
 2. **Finální text komentáře:**
-   - Pokud Daniel napsal česky, přelož do jednoduché angličtiny, zachovej jeho význam a nic nepřidávej.
-   - Pokud napsal anglicky, oprav jen gramatiku a překlepy.
+   - Daniel píše česky nebo lámanou angličtinou. Vždy z toho udělej **přirozenou, plynulou
+     angličtinu připravenou k publikaci**: uhlaď formulace a slovosled a klidně přeskládej
+     věty, aby to znělo jako rodilý mluvčí, který píše krátce a jednoduše. Nejde jen o opravu
+     gramatiky.
+   - Zachovej jeho význam, názor a tón. NEpřidávej nová fakta, čísla ani tvrzení o něm.
+     Žádné metafory a žádný žargon.
+   - Ve výsledné odpovědi ukaž finální EN text, aby ho Daniel viděl.
    - `ok` znamená použít příklad beze změny. Když obsahuje `[tvoje zkušenost]`, NEPOUŽÍVEJ ho a zeptej se.
    - Max ~1000 znaků, bez odkazů, pokud je Daniel výslovně nenapsal.
 3. Naplánuj všechno **jedním** voláním `schedule_reactions`:
