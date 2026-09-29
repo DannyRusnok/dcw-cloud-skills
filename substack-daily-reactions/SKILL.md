@@ -105,7 +105,7 @@ Režim A NIC nepublikuje ani neplánuje.
    - Max ~1000 znaků, bez odkazů, pokud je Daniel výslovně nenapsal.
 3. Naplánuj všechno **jedním** voláním `schedule_reactions`:
    `items:[{targetUrl, authorHandle, body, kind, discovery:true jen pro D*}]`. Pořadí zachovej podle
-   Danielovy odpovědi. Nástroj sám rozloží komentáře po 25–55 min v okně 07–22 h (Praha).
+   Danielovy odpovědi. Nástroj sám rozloží komentáře po 2–6 min v okně 07–22 h (Praha).
 4. `N4 core` → `reaction_pool {action:"set_role", handles:[…], role:"core"}`.
    `vyhoď @x` → `reaction_pool {action:"remove", handles:["x"]}`.
    `přidej C1,C3` → `reaction_pool {action:"add", handles:[…], source:"discovery"}`.
