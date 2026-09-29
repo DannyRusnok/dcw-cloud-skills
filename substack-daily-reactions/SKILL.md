@@ -28,7 +28,9 @@ v této session (Claude app na mobilu). Vše přes konektor **substack-mcp**.
 Pokud `total < 60`, na konci výstupu přidej sekci **Rozšíření poolu** (viz A5).
 
 ### A2. Kandidáti
-`get_reaction_candidates` `{notes:20, posts:5, discoveryNotes:6}`.
+`get_reaction_candidates` `{notes:20, posts:5, discoveryNotes:0}`. Kandidáti jsou seřazení podle
+`priority` (1 = core nebo tech/AI + ≥5k followers, 2 = tech NEBO ≥5k, 3 = zbytek) a pak podle skóre.
+Když pool nemá co nabídnout, `notes[]` se doplní z home feedu „For you" (`role:"feed"`).
 - Pokud se vrátí chyba auth nebo prázdné výsledky s podezřením na cookie, zkus
   `substack-cookie-heal` (helper skill ve stejném repu) a volání zopakuj 1×.
 - Pokud je pool prázdný, pokračuj jen s discovery a Rozšířením poolu.
@@ -52,7 +54,7 @@ Každá položka má ID `P1…`, `N1…` nebo `D1…` (post / note / discovery) 
 ```
 **N3 · @handle** (12k followers · core | pool | discovery) · před 5 h · ❤ 84 · 💬 12
 <URL>
-🇨🇿 Překlad: <celý note přeložený do češtiny; u postu shrnutí ve 3–4 větách + hlavní teze>
+🇨🇿 Překlad: <NOTE: celý note přeložený do češtiny. POST: viz „Shrnutí postu" níže>
 🎯 Úhel: <1 věta česky — kde může Daniel přidat vlastní zkušenost (build in public, automatizace,
    tvorba, distribuce, táta + side projekty, AI v praxi). Když se to nehodí, reaguj přímo na
    téma autora.>
@@ -60,16 +62,23 @@ Každá položka má ID `P1…`, `N1…` nebo `D1…` (post / note / discovery) 
 ✏️ Příklad: <1–3 krátké věty v jednoduché angličtině jako inspirace, NE hotový koment>
 ```
 
+**Shrnutí postu (Lathe „Long" v češtině)** — u každého postu místo krátkého překladu:
+- ~280–350 slov, věrně podle textu: jen to, co post říká, čísla a jména přesně, žádné vlastní
+  názory ani fakta navíc. Krátké věty, bez vaty, nezačínej titulkem ani „V tomto postu".
+- Struktura: 1 odstavec o tom, co post tvrdí a pro koho je; sekce **Hlavní body** se 4–6 odrážkami
+  (konkrétní fakta, čísla, příklady z postu); sekce **Co si z toho vzít** se 2–3 větami.
+- Pod shrnutí dej titulek a podtitul postu v originále.
+
 Pravidla pro příklad: jednoduchá angličtina, krátké věty, žádné metafory a žargon, žádné
 „Great post!", žádné odkazy, žádná zmínka o Danielových nástrojích ani produktech. Nesmí
 obsahovat fakta o Danielovi, která neznáš. Když potřebuješ jeho zkušenost, napiš
 `[tvoje zkušenost]`.
 
-Pořadí: nejdřív posty, pak notes podle `score`, na konec discovery.
+Pořadí: nejdřív posty, pak notes (tak, jak přišly — podle priority a skóre), na konec discovery.
 
 ### A5. Rozšíření poolu (jen když total < 60, nebo v neděli)
-`discover_reaction_pool` `{source:"subscriptions", sample:25}`, a až **po jeho dokončení**
-`{source:"explore", sample:15}`. NIKDY je nevolej paralelně: Substack pak vrací 429 a
+`discover_reaction_pool` `{source:"foryou", sample:30}`, a až **po jeho dokončení**
+`{source:"subscriptions", sample:25}`. Tech/AI a větší publikum (`priority` 1–2) dej nahoru. NIKDY je nevolej paralelně: Substack pak vrací 429 a
 výsledek je prázdný. Když obě volání vrátí 0 kandidátů, napiš jednu větu „discovery dnes
 nic nenašla (pravděpodobně rate limit)" a pokračuj.
 Proveď stejný filtr jako v A3 a ukaž max 15 kandidátů jako `C1…`, každého na jeden řádek:
@@ -104,7 +113,8 @@ Režim A NIC nepublikuje ani neplánuje.
    - `ok` znamená použít příklad beze změny. Když obsahuje `[tvoje zkušenost]`, NEPOUŽÍVEJ ho a zeptej se.
    - Max ~1000 znaků, bez odkazů, pokud je Daniel výslovně nenapsal.
 3. Naplánuj všechno **jedním** voláním `schedule_reactions`:
-   `items:[{targetUrl, authorHandle, body, kind, discovery:true jen pro D*}]`. Pořadí zachovej podle
+   `items:[{targetUrl, authorHandle, body, kind, discovery:true pro D* a pro položky s role "feed"}]`
+   (autor se tím přidá do poolu). Pořadí zachovej podle
    Danielovy odpovědi. Nástroj sám rozloží komentáře po 2–6 min v okně 07–22 h (Praha).
 4. `N4 core` → `reaction_pool {action:"set_role", handles:[…], role:"core"}`.
    `vyhoď @x` → `reaction_pool {action:"remove", handles:["x"]}`.
