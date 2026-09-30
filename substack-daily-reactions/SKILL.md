@@ -38,7 +38,7 @@ Když pool nemá co nabídnout, `notes[]` se doplní z home feedu „For you" (`
 ### A3. Filtr podle úsudku (vyřaď, nepiš o tom)
 Vyřaď položky, ke kterým Daniel nemůže nic přidat:
 - čistý promo nebo odkaz bez obsahu („check out my new post"), giveaway, sbírka linků;
-- politika, konspirace, investiční tipy, krypto hype, medicínské rady;
+- politika, konspirace, investiční tipy, krypto hype, medicínské rady, gender/diverzita v tech (Daniel k tomu komentovat nechce);
 - neanglický text;
 - discovery autory, kteří zjevně nejsou creator s vlastní tvorbou (anonymní citátové účty
   a podobně). Z discovery nech **max 3** nejlepší.
