@@ -89,6 +89,9 @@ Zbytek přeskočím.
 
 Režim A NIC nepublikuje ani neplánuje.
 
+## Interaktivní mód po jednom (Daniel 5.10.2026)
+Když Daniel řekne „po jednom“ nebo „postupně“: připrav kandidáty na pozadí (A1–A4), ale v chatu ukazuj vždy **jen jednu** položku ve formátu A4. Na jeho odpověď hned udělej Režim B pro tuto položku (`schedule_reactions` s jedním itemem), ukaž finální EN text a čas a v téže zprávě pošli další položku. `skip` = další položka.
+
 ## Režim B — Daniel odpověděl v této session
 
 1. Rozparsuj odpověď. Položky, které nezmínil, přeskoč.
