@@ -1,6 +1,6 @@
 ---
 name: substack-daily-reactions
-description: Denní reakční rutina na Substacku — ráno vybere 3–5 postů a 10–20 notes od Substack creatorů z reaction poolu (+ 3 discovery), ke každé položce dá CZ překlad, úhel, otázku a příklad; Daniel ve STEJNÉ session odpoví vlastními komentáři a rutina je naplánuje rozložené přes den. Cíl = noví subs (komentář vidí čtenáři cílového autora → návštěva profilu). Použij když běží cloud routine "Substack daily reactions", nebo když Daniel řekne "reakce na dnes", "reakční rutina", "koho dnes komentovat", "naplánuj moje komentáře".
+description: Denní reakční rutina na Substacku — ráno vybere 10–20 notes od Substack creatorů z reaction poolu (+ 3 discovery), ke každé položce dá CZ překlad, úhel, otázku a příklad; Daniel ve STEJNÉ session odpoví vlastními komentáři a rutina je naplánuje rozložené přes den. Cíl = noví subs (komentář vidí čtenáři cílového autora → návštěva profilu). Použij když běží cloud routine "Substack daily reactions", nebo když Daniel řekne "reakce na dnes", "reakční rutina", "koho dnes komentovat", "naplánuj moje komentáře".
 ---
 
 # Substack Daily Reactions
@@ -28,7 +28,7 @@ v této session (Claude app na mobilu). Vše přes konektor **substack-mcp**.
 Pokud `total < 60`, na konci výstupu přidej sekci **Rozšíření poolu** (viz A5).
 
 ### A2. Kandidáti
-`get_reaction_candidates` `{notes:20, posts:5, discoveryNotes:0}`. Kandidáti jsou seřazení podle
+`get_reaction_candidates` `{notes:20, posts:0, discoveryNotes:0}` (posty se nesbírají ani nekomentují — Daniel 5.10.2026). Kandidáti jsou seřazení podle
 `priority` (1 = core nebo tech/AI + ≥5k followers, 2 = tech NEBO ≥5k, 3 = zbytek) a pak podle skóre.
 Když pool nemá co nabídnout, `notes[]` se doplní z home feedu „For you" (`role:"feed"`).
 - Pokud se vrátí chyba auth nebo prázdné výsledky s podezřením na cookie, zkus
@@ -43,18 +43,15 @@ Vyřaď položky, ke kterým Daniel nemůže nic přidat:
 - discovery autory, kteří zjevně nejsou creator s vlastní tvorbou (anonymní citátové účty
   a podobně). Z discovery nech **max 3** nejlepší.
 
-Po filtru se drž cíle: 3–5 postů a 10–20 notes. Když jich je méně, nevadí, kvalita má přednost před počtem.
+Po filtru se drž cíle: 10–20 notes. Když jich je méně, nevadí, kvalita má přednost před počtem.
 
 ### A4. Příprava položek
-U postů je celý čitelný text přímo v poli `text` kandidáta (server ho stáhl). `WebFetch` na
-publikační domény NEPOUŽÍVEJ, protože cloud egress proxy je blokuje.
-
-Každá položka má ID `P1…`, `N1…` nebo `D1…` (post / note / discovery) a tento formát:
+Každá položka má ID `N1…` nebo `D1…` (note / discovery) a tento formát:
 
 ```
 **N3 · @handle** (12k followers · core | pool | discovery) · před 5 h · ❤ 84 · 💬 12
 <URL>
-🇨🇿 Překlad: <NOTE: celý note přeložený do češtiny. POST: viz „Shrnutí postu" níže>
+🇨🇿 Překlad: <celý note přeložený do češtiny>
 🎯 Úhel: <1 věta česky — kde může Daniel přidat vlastní zkušenost (build in public, automatizace,
    tvorba, distribuce, táta + side projekty, AI v praxi). Když se to nehodí, reaguj přímo na
    téma autora.>
@@ -62,19 +59,12 @@ Každá položka má ID `P1…`, `N1…` nebo `D1…` (post / note / discovery) 
 ✏️ Příklad: <1–3 krátké věty v jednoduché angličtině jako inspirace, NE hotový koment>
 ```
 
-**Shrnutí postu (Lathe „Long" v češtině)** — u každého postu místo krátkého překladu:
-- ~280–350 slov, věrně podle textu: jen to, co post říká, čísla a jména přesně, žádné vlastní
-  názory ani fakta navíc. Krátké věty, bez vaty, nezačínej titulkem ani „V tomto postu".
-- Struktura: 1 odstavec o tom, co post tvrdí a pro koho je; sekce **Hlavní body** se 4–6 odrážkami
-  (konkrétní fakta, čísla, příklady z postu); sekce **Co si z toho vzít** se 2–3 větami.
-- Pod shrnutí dej titulek a podtitul postu v originále.
-
 Pravidla pro příklad: jednoduchá angličtina, krátké věty, žádné metafory a žargon, žádné
 „Great post!", žádné odkazy, žádná zmínka o Danielových nástrojích ani produktech. Nesmí
 obsahovat fakta o Danielovi, která neznáš. Když potřebuješ jeho zkušenost, napiš
 `[tvoje zkušenost]`.
 
-Pořadí: nejdřív posty, pak notes (tak, jak přišly — podle priority a skóre), na konec discovery.
+Pořadí: notes tak, jak přišly (podle priority a skóre), na konec discovery.
 
 ### A5. Rozšíření poolu (jen když total < 60, nebo v neděli)
 `discover_reaction_pool` `{source:"foryou", sample:30}`, a až **po jeho dokončení**
@@ -90,7 +80,7 @@ Na konci napiš návod k odpovědi. Musí se vejít na obrazovku telefonu:
 ```
 Odpověz třeba:
 N1: <tvůj komentář — česky nebo anglicky>
-P2 ok        ← použij příklad tak, jak je
+N2 ok        ← použij příklad tak, jak je
 N4 core      ← autor do core
 vyhoď @handle
 přidej C1,C3
