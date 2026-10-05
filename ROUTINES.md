@@ -21,7 +21,6 @@ NIKDY v tomto public repu — skilly na ně odkazují jako `$NOTIFY_KEY` apod.
 | newsletter digest | `newsletter-digest/SKILL.md` | 1×/den 06:00 CET | NOTIFY_KEY | Gmail, dcw-context-hub (Notion proxy), mem0 |
 | foundary tool PR | `foundary-tool-pr/SKILL.md` | on-demand / scheduled | NOTIFY_KEY | GitHub, dcw-context-hub (Notion proxy) |
 | Substack daily reactions (`trig_01JCDRJ7jec7dRXiDDEsv9tc`) | `substack-daily-reactions/SKILL.md` | denně 06:30 CEST (`30 4 * * *` UTC) | — | substack-mcp (reaction_pool, get_reaction_candidates, schedule_reactions, discover_reaction_pool) |
-| open-loops-collect | `open-loops-collect/SKILL.md` | každé 2 h 07–23 CEST (`0 5-21/2 * * *` UTC) | LOOPS_INGEST_TOKEN | Gmail, Slack, Notion; repo checkout reel-pipeline-studio |
 | ~~weekly CEO report~~ RETIRED 2026-08-31 (PC schtask smazán; smaž routinu i v claude.ai) | `weekly-ceo-report/SKILL.md` | — | NOTIFY_KEY (jen fallback) | article-forge, substack-mcp (grownote), drippery-mcp, mem0, dcw-context-hub, gumroad-mcp (revenue sekce; bez connectoru se sekce vynechá) |
 
 ## Helper skilly (nejsou samostatné routiny)
