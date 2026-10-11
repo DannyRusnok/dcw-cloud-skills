@@ -86,7 +86,7 @@ Pravidla:
    `{project:"secondbrain", category:"fact"}` — slouží jako baseline pro delty příště.
 2. Pošli report přes grownote MCP `send_telegram_message({text:<report>})`.
 3. Pokud Telegram selže a routine má `NOTIFY_KEY`: fallback
-   `curl -s -X POST "https://subhook.fly.dev/api/notify?key=$NOTIFY_KEY" -d "<report>"`.
+   `curl -s -X POST "https://dcw-context-hub-mcp.fly.dev/api/notify?key=$NOTIFY_KEY" -d "<report>"`.
    Bez NOTIFY_KEY: vrať report jako text output (Daniel ho uvidí v session logu).
 
 ## Guardrails

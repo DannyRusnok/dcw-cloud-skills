@@ -10,7 +10,7 @@ Druhá polovina newsletter→PR pipeline. `newsletter-digest` navrhuje (status `
 
 ## Konfigurace (předává routine prompt / env)
 
-- `NOTIFY_KEY` — subhook Telegram relay klíč (stejný jako newsletter-digest). Chybí → Telegram krok přeskoč.
+- `NOTIFY_KEY` — notify relay (zprávy jdou do inboxu Gaia Control, ne do Telegramu) klíč (stejný jako newsletter-digest). Chybí → notify krok přeskoč.
 - GitHub přístup: routine prompt musí dodat buď (a) `GH_TOKEN` PAT s `repo` scope pro shell `gh`, nebo (b) připojený GitHub konektor (`plugin_engineering_github` tools). Bez jednoho z nich **nelze otevřít PR** → zapiš to do výstupu a skonči, řádky nech `Approved`.
 - Notion connector = **oficiální Notion konektor** (`notion-query-data-sources` / `notion-update-page` / `notion-fetch`). Backlog DB = "Foundary Tool Backlog", data source `collection://37d3f179-067e-81ab-90d9-000b4b2c8029` (parent page `34d3f179-067e-81f5-bc04-f5a40d5aae6b`). Notion proxy tooly v DCW-context-hub byly 2026-10-11 odstraněny.
 - Owner všech repů: `DannyRusnok`.
@@ -76,13 +76,13 @@ Po úspěšném otevření PR/issue `notion-update-page` (command `update_proper
 
 Když implementace selže (compile/struktura/cokoli) → **nech `Status = Approved`** (ať to příště zkusí nebo Daniel vyřeší ručně) a zaznamenej důvod do výstupu. Nikdy nenech řádek ve falešném "hotovo".
 
-## Krok 6 — Telegram ping
+## Krok 6 — ping do Gaia Control
 
 Pokud `NOTIFY_KEY`:
 ```
-POST https://subhook.fly.dev/api/notify?key=$NOTIFY_KEY
+POST https://dcw-context-hub-mcp.fly.dev/api/notify?key=$NOTIFY_KEY
 Content-Type: application/json
-{ "title": "🔧 Foundary tool PRs — YYYY-MM-DD", "text": "{N} draft PR / {M} issue z approved backlogu.\n{seznam: repo — title — PR/issue URL}" }
+{ "source": "foundary-tool-pr", "title": "🔧 Foundary tool PRs — YYYY-MM-DD", "text": "{N} draft PR / {M} issue z approved backlogu.\n{seznam: repo — title — PR/issue URL}" }
 ```
 Drž < 3900 znaků.
 

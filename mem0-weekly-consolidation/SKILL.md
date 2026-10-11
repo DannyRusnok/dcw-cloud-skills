@@ -10,7 +10,7 @@ description: >
 # mem0-weekly-consolidation
 
 **Inputs from the routine prompt (NOT in this file — public repo):**
-- `NOTIFY_KEY` — subhook Telegram relay key. If missing, skip the Telegram step.
+- `NOTIFY_KEY` — notify relay (zprávy jdou do inboxu Gaia Control, ne do Telegramu) key. If missing, skip the Telegram step.
 
 CONTEXT (infra v3, 2026-06-11): the index holds ~2000+ memories (incl. a one-time
 backfill of 384 historical sessions). NEVER pull full entries — always use compact mode.
@@ -74,9 +74,9 @@ Then one line per scope with activity: "  <scope>: <merged> merged, <archived> a
 Plus "backlog: N deferred" and/or "safety cap hit in: <scopes>" if applicable.
 ```
 
-## STEP 6 — Telegram push via Bash
+## STEP 6 — Gaia Control push via Bash
 
-`curl -s -X POST "https://subhook.fly.dev/api/notify?key=$NOTIFY_KEY" -d "<summary text — newlines OK>"`
+`curl -s -X POST "https://dcw-context-hub-mcp.fly.dev/api/notify?key=$NOTIFY_KEY" -H "Content-Type: application/json" -d '{"source":"mem0-weekly-consolidation","title":"🧹 mem0 weekly consolidation","text":"<summary text — newlines as \\n>"}'`
 
 ## STEP 7 — OPTIONAL session journal
 

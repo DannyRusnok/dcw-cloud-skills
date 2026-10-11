@@ -1,16 +1,16 @@
 ---
 name: newsletter-digest
 description: |
-  Denní cloud routina — projde nové (unread) Substack newslettery v Danielově Gmailu, shrne každý, ohodnotí relevanci 1–5 vůči jeho projektům (content/Substack growth, AI/agents/Claude/MCP, SaaS = Drippery + Article Forge, solo-builder/indie, gamedev Eli&Uri), vyrobí denní Notion digest page a pošle Telegram ping s odkazem na tu page. Drží jen score ≥3, zbytek shrne do "Dropped" řádku. Navíc z high-signal (score 4–5) newsletterů vygeneruje strukturované návrhy úprav konkrétních foundary toolů a zapíše je do Notion "Foundary Tool Backlog" DB (status Proposed) — sister-routine `foundary-tool-pr` je pak po Danielově schválení implementuje + otevře PR. Po zpracování označí maily jako přečtené (dedup pro příští běh). Použij když Daniel řekne: "projdi newslettery", "udělej digest", "shrň substack newslettery", "newsletter digest", "co přišlo za newslettery", "run newsletter digest". Primárně běží jako scheduled cloud routine 6:00 CET.
+  Denní cloud routina — projde nové (unread) Substack newslettery v Danielově Gmailu, shrne každý, ohodnotí relevanci 1–5 vůči jeho projektům (content/Substack growth, AI/agents/Claude/MCP, SaaS = Drippery + Article Forge, solo-builder/indie, gamedev Eli&Uri), vyrobí denní Notion digest page a pošle ping do Gaia Control s odkazem na tu page. Drží jen score ≥3, zbytek shrne do "Dropped" řádku. Navíc z high-signal (score 4–5) newsletterů vygeneruje strukturované návrhy úprav konkrétních foundary toolů a zapíše je do Notion "Foundary Tool Backlog" DB (status Proposed) — sister-routine `foundary-tool-pr` je pak po Danielově schválení implementuje + otevře PR. Po zpracování označí maily jako přečtené (dedup pro příští běh). Použij když Daniel řekne: "projdi newslettery", "udělej digest", "shrň substack newslettery", "newsletter digest", "co přišlo za newslettery", "run newsletter digest". Primárně běží jako scheduled cloud routine 6:00 CET.
 ---
 
 # newsletter-digest
 
-Denní souhrn odebíraných Substack newsletterů + relevance scoring vůči Danielovým projektům. Output = Notion page + Telegram ping. Navazuje na dřívější `📰 Substack Digest` series (parent page `34d3f179-067e-81f5-bc04-f5a40d5aae6b`) — drž **identický formát**.
+Denní souhrn odebíraných Substack newsletterů + relevance scoring vůči Danielovým projektům. Output = Notion page + ping do Gaia Control. Navazuje na dřívější `📰 Substack Digest` series (parent page `34d3f179-067e-81f5-bc04-f5a40d5aae6b`) — drž **identický formát**.
 
 ## Konfigurace (předává routine prompt / env)
 
-- `NOTIFY_KEY` — klíč pro subhook Telegram relay. **NENÍ v tomto skillu** (public repo) — routine prompt ho dodá. Pokud chybí, Telegram krok přeskoč a jen zaznamenej Notion URL do výstupu.
+- `NOTIFY_KEY` — klíč pro notify relay (zprávy jdou do inboxu Gaia Control, ne do Telegramu). **NENÍ v tomto skillu** (public repo) — routine prompt ho dodá. Pokud chybí, notify krok přeskoč a jen zaznamenej Notion URL do výstupu.
 - Gmail label pro Substack newslettery: `Label_4290506968513556957`. Pokud by neseděl, `list_labels` → najdi label s názvem "Substack".
 - Notion parent page (digesty): `34d3f179-067e-81f5-bc04-f5a40d5aae6b`.
 - Notion connector v cloudu = **oficiální Notion konektor** (Danielův osobní workspace): `notion-search`, `notion-fetch`, `notion-create-pages`, `notion-create-database`, `notion-query-data-sources`. (Notion proxy tooly v DCW-context-hub byly 2026-10-11 odstraněny.)
@@ -109,13 +109,13 @@ Children bloky (přesně tento tvar — match prior art). `notion-create-pages` 
 6. `divider`.
 7. `paragraph` italic: `"Dropped (score ≤2): {krátký výčet co a proč}, plus N Substack system notifications."`
 
-## Krok 5 — Telegram ping
+## Krok 5 — ping do Gaia Control
 
 Pokud je `NOTIFY_KEY` k dispozici:
 ```
-POST https://subhook.fly.dev/api/notify?key=$NOTIFY_KEY
+POST https://dcw-context-hub-mcp.fly.dev/api/notify?key=$NOTIFY_KEY
 Content-Type: application/json
-{ "title": "📰 Newsletter digest — YYYY-MM-DD", "text": "{kept} keepů z {scanned} newsletterů{, N tool ideas pokud >0}. Top: {1-2 nejvyšší score tituly}.\n{Notion page URL}" }
+{ "source": "newsletter-digest", "title": "📰 Newsletter digest — YYYY-MM-DD", "text": "{kept} keepů z {scanned} newsletterů{, N tool ideas pokud >0}. Top: {1-2 nejvyšší score tituly}.\n{Notion page URL}" }
 ```
 Drž text < 3900 znaků. Notion URL z odpovědi `notion-create-pages` (`url` field).
 
@@ -130,10 +130,10 @@ Pokud score-5 newsletter obsahuje konkrétní actionable insight pro projekt (ta
 
 ## Výstup do chatu (když běží manuálně)
 
-Jednořádkové shrnutí: `{kept}/{scanned} keepů · Notion: <url> · Telegram: sent/skipped`. Žádný dlouhý dump — vše je v Notion page.
+Jednořádkové shrnutí: `{kept}/{scanned} keepů · Notion: <url> · Gaia Control: sent/skipped`. Žádný dlouhý dump — vše je v Notion page.
 
 ## Edge cases
 
-- **0 nových newsletterů**: nevytvářej prázdnou page, pošli Telegram "Žádné nové newslettery dnes" jen pokud `NOTIFY_KEY` je, jinak skonči tiše.
+- **0 nových newsletterů**: nevytvářej prázdnou page, pošli ping "Žádné nové newslettery dnes" jen pokud `NOTIFY_KEY` je, jinak skonči tiše.
 - **Gmail/Notion connector chybí v cloudu**: zapiš to do výstupu a skonči — neměň stav (nemarkuj read).
 - **Tracking linky**: Substack maily mají redirect URL; preferuj canonical `*.substack.com/p/...` z těla.

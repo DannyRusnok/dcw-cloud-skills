@@ -104,7 +104,7 @@ a rate-limit error, wait briefly and continue with the next person.
 ### 5a — SUCCESS notify
 
 ```
-curl -s -X POST "https://subhook.fly.dev/api/notify?key=$NOTIFY_KEY" -H 'Content-Type: application/json' \
+curl -s -X POST "https://dcw-context-hub-mcp.fly.dev/api/notify?key=$NOTIFY_KEY" -H 'Content-Type: application/json' \
   -d '{"title":"❤️ Substack auto-like — <YYYY-MM-DD HH:MM>","text":"Liked <succeeded>/<attempted> notes. Mutual bucket <runIndex>/5: <N> partners checked, <M> liked.\n<up to 5 sample lines>"}'
 ```
 
@@ -115,7 +115,7 @@ those partners went quiet.
 ### 5b — FAILURE notify (cookie/auth error or all source calls failed)
 
 ```
-curl -s -X POST "https://subhook.fly.dev/api/notify?key=$NOTIFY_KEY" -H 'Content-Type: application/json' \
+curl -s -X POST "https://dcw-context-hub-mcp.fly.dev/api/notify?key=$NOTIFY_KEY" -H 'Content-Type: application/json' \
   -d '{"title":"⚠️ Substack auto-like FAILED — <YYYY-MM-DD HH:MM>","text":"<short reason, e.g. cookie expired — rotate via set_substack_cookie>"}'
 ```
 

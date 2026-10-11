@@ -164,7 +164,7 @@ Po naplánování pošli Danielovi preview přes **subhook Telegram relay** (ste
 ostatní routiny). `NOTIFY_KEY` dostaneš z routine promptu — NIKDY ho nedávej do hub skillu.
 Relay je text-only (drží bot token v subhooku), takže pošli text + bg URL inline:
 ```
-curl -s -X POST "https://subhook.fly.dev/api/notify?key=$NOTIFY_KEY" -H "Content-Type: application/json" \
+curl -s -X POST "https://dcw-context-hub-mcp.fly.dev/api/notify?key=$NOTIFY_KEY" -H "Content-Type: application/json" \
   -d '{"title":"📅 Reel Kit launch note — <YYYY-MM-DD>","text":"<note text>\n\n— publikace 12:00 CET · scheduled id <id> · archetyp <x>\npozadí: <imageSpec.backgroundUrl nebo \"gradient\">\nuprav/zruš v grownote /schedule do 12:00"}'
 ```
 
