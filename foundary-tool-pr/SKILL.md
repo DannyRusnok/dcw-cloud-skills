@@ -12,14 +12,14 @@ Druhá polovina newsletter→PR pipeline. `newsletter-digest` navrhuje (status `
 
 - `NOTIFY_KEY` — subhook Telegram relay klíč (stejný jako newsletter-digest). Chybí → Telegram krok přeskoč.
 - GitHub přístup: routine prompt musí dodat buď (a) `GH_TOKEN` PAT s `repo` scope pro shell `gh`, nebo (b) připojený GitHub konektor (`plugin_engineering_github` tools). Bez jednoho z nich **nelze otevřít PR** → zapiš to do výstupu a skonči, řádky nech `Approved`.
-- Notion connector = **DCW-context-hub** (`notion_query_database` / `notion_update_page` / `notion_get_block_children`). Backlog DB = "Foundary Tool Backlog" (vytvořená sister-routinou, parent page `34d3f179-067e-81f5-bc04-f5a40d5aae6b`).
+- Notion connector = **oficiální Notion konektor** (`notion-query-data-sources` / `notion-update-page` / `notion-fetch`). Backlog DB = "Foundary Tool Backlog", data source `collection://37d3f179-067e-81ab-90d9-000b4b2c8029` (parent page `34d3f179-067e-81f5-bc04-f5a40d5aae6b`). Notion proxy tooly v DCW-context-hub byly 2026-10-11 odstraněny.
 - Owner všech repů: `DannyRusnok`.
 
 ## Krok 1 — Najdi backlog a vytáhni Approved
 
-1. `notion_search` "Foundary Tool Backlog" → database/data_source id. Pokud DB neexistuje, **nic ke zpracování** → skonči tiše (digest ji ještě nevytvořil).
-2. `notion_query_database` filtr `Status = "Approved"`. Žádné Approved řádky → skonči tiše (případně Telegram "0 approved" jen pokud `NOTIFY_KEY`).
-3. Pro každý řádek vytáhni: `Title`, `Repo`, `Effort`, `Confidence`, `Auto-safe`, `Source`, `Insight`, `Change`, page id (pro pozdější update).
+1. Data source `collection://37d3f179-067e-81ab-90d9-000b4b2c8029`. Pokud neexistuje (`notion-fetch` selže), **nic ke zpracování** → skonči tiše.
+2. `notion-query-data-sources` mode `rows`, filtr `Status` enum_is `Approved`. Žádné Approved řádky → skonči tiše (případně Telegram "0 approved" jen pokud `NOTIFY_KEY`).
+3. Pro každý řádek vytáhni: `Title`, `Repo`, `Effort`, `Confidence`, `Auto-safe`, `Source`, `Insight`, `Change`, page `url` (pro pozdější update).
 
 Zpracuj max **3 řádky / běh** (chrání před PR floodem). Zbytek nech na příště, seřaď podle `Auto-safe=true` first, pak `Confidence` high→low.
 
@@ -70,7 +70,7 @@ Když je rozsah moc velký nebo místo změny nejasné: založ issue v `DannyRus
 
 ## Krok 5 — Update Notion řádek
 
-Po úspěšném otevření PR/issue `notion_update_page` na daný řádek:
+Po úspěšném otevření PR/issue `notion-update-page` (command `update_properties`) na daný řádek:
 - `Status` → `PR opened` (pro PR) nebo nech `Approved` + poznámka pokud jen issue (volitelně přidej `Status` hodnotu `Issue` pokud ji DB má; jinak `PR opened` a do `PR` dej issue URL).
 - `PR` (url) = PR nebo issue URL.
 

@@ -13,7 +13,8 @@ Denní souhrn odebíraných Substack newsletterů + relevance scoring vůči Dan
 - `NOTIFY_KEY` — klíč pro subhook Telegram relay. **NENÍ v tomto skillu** (public repo) — routine prompt ho dodá. Pokud chybí, Telegram krok přeskoč a jen zaznamenej Notion URL do výstupu.
 - Gmail label pro Substack newslettery: `Label_4290506968513556957`. Pokud by neseděl, `list_labels` → najdi label s názvem "Substack".
 - Notion parent page (digesty): `34d3f179-067e-81f5-bc04-f5a40d5aae6b`.
-- Notion connector v cloudu = **DCW-context-hub** (`notion_create_page` / `notion_search` / `notion_get_block_children`). NEPOUŽÍVEJ firemní/oficiální Notion konektor.
+- Notion connector v cloudu = **oficiální Notion konektor** (Danielův osobní workspace): `notion-search`, `notion-fetch`, `notion-create-pages`, `notion-create-database`, `notion-query-data-sources`. (Notion proxy tooly v DCW-context-hub byly 2026-10-11 odstraněny.)
+- Foundary Tool Backlog data source: `collection://37d3f179-067e-81ab-90d9-000b4b2c8029`.
 
 ## Krok 1 — Načti kontext projektů (pro scoring)
 
@@ -27,7 +28,7 @@ Před scoringem si připomeň, na čem Daniel teď dělá, aby relevance nebyla 
 
 **Dedup (Gmail konektor je READ-ONLY — nelze spoléhat na mark-read):**
 - Primární okno = `newer_than:1d` (routina běží denně 6:00, takže 24h okno = 1 den newsletterů).
-- **Cross-check proti včerejší digest page:** najdi předchozí `📰 Substack Digest` page (notion_search "Substack Digest", seřaď podle data), vytáhni všechny `Read` URL z ní, a v dnešním běhu **přeskoč jakýkoli newsletter, jehož canonical URL už tam je** (chrání před boundary duplikáty na hraně 24h okna).
+- **Cross-check proti včerejší digest page:** najdi předchozí `📰 Substack Digest` page (`notion-search` "Substack Digest", vezmi nejnovější podle data v titulku a otevři ji přes `notion-fetch`), vytáhni všechny `Read` URL z ní, a v dnešním běhu **přeskoč jakýkoli newsletter, jehož canonical URL už tam je** (chrání před boundary duplikáty na hraně 24h okna).
 - Pokud Daniel reconnectne Gmail s write scope, krok 6 (mark-read) pak dedup zpřesní — ale skill funguje i bez toho.
 
 **Extrakce těla (DŮLEŽITÉ — emaily jsou 80–330K HTML, netahej je do kontextu):**
@@ -77,19 +78,19 @@ Pro newslettery se **score 4 nebo 5**, které nesou **konkrétní, přenositelno
 
 Návrhy z kroku 3.5 ulož do trvalé Notion DB (sister-routine `foundary-tool-pr` z ní čte).
 
-1. **Najdi DB:** `notion_search` "Foundary Tool Backlog" (data_source/database). Pokud existuje, použij její id.
-2. **Pokud neexistuje, vytvoř ji** přes `notion_create_database`, parent page `34d3f179-067e-81f5-bc04-f5a40d5aae6b` (stejná parent jako digest pages). Properties:
+1. **DB:** data source `collection://37d3f179-067e-81ab-90d9-000b4b2c8029` (database "Foundary Tool Backlog"). Když by neexistovala, najdi ji přes `notion-search` "Foundary Tool Backlog" a `notion-fetch` (collection:// URL).
+2. **Pokud neexistuje, vytvoř ji** přes `notion-create-database`, parent page `34d3f179-067e-81f5-bc04-f5a40d5aae6b` (stejná parent jako digest pages). Properties:
    - `Title` (title), `Repo` (select), `Status` (select: `Proposed` / `Approved` / `PR opened` / `Done` / `Rejected`), `Effort` (select S/M/L), `Confidence` (select high/med/low), `Auto-safe` (checkbox), `Source` (url), `Insight` (rich_text), `Change` (rich_text), `PR` (url).
-3. **Dedup:** než přidáš řádek, `notion_query_database` filtr `Title` ~ podobný / stejný `Source` + `Repo`. Pokud duplicita (jakýkoli status kromě `Rejected`), přeskoč.
-4. Pro každý nový návrh vytvoř page v té DB, `Status = Proposed`. `Auto-safe` checkbox dle `auto_safe`.
+3. **Dedup:** než přidáš řádek, `notion-query-data-sources` (mode `rows`, filtr `Source` string_is + `Repo` enum_is, případně `Title` string_contains). Pokud duplicita (jakýkoli status kromě `Rejected`), přeskoč.
+4. Pro každý nový návrh vytvoř page v té DB přes `notion-create-pages` (parent `data_source_id` = výše uvedená collection), `Status = Proposed`. `Auto-safe` checkbox dle `auto_safe`.
 
 Pokud Notion DB krok selže, **nesmí to shodit digest** — zaznamenej do výstupu "backlog write skipped" a pokračuj krokem 4.
 
 ## Krok 4 — Postav Notion digest page
 
-`notion_create_page`, parent `{ "type": "page_id", "page_id": "34d3f179-067e-81f5-bc04-f5a40d5aae6b" }`, icon emoji `📰`, title `📰 Substack Digest — YYYY-MM-DD` (dnešní datum CET).
+`notion-create-pages`, parent `{ "type": "page_id", "page_id": "34d3f179-067e-81f5-bc04-f5a40d5aae6b" }`, icon `📰`, title `📰 Substack Digest — YYYY-MM-DD` (dnešní datum CET).
 
-Children bloky (přesně tento tvar — match prior art):
+Children bloky (přesně tento tvar — match prior art). `notion-create-pages` bere obsah jako Notion Markdown v poli `content`: paragraph = řádek textu, `divider` = `---`, `heading_2` = `## `, `bulleted_list_item` = `- `, bold `**…**`, italic `*…*`, odkaz `[Read](url)`:
 1. `paragraph` bold: `"{scanned} scanned · {kept} kept (≥3)"` (scanned = všechny reálné newslettery vč. dropped, kept = score ≥3).
 2. `divider`.
 3. Pro score 5,4,3 (sestupně, jen neprázdné): `heading_2` text `"Score N"`, pak per item `bulleted_list_item` rich_text:
@@ -116,7 +117,7 @@ POST https://subhook.fly.dev/api/notify?key=$NOTIFY_KEY
 Content-Type: application/json
 { "title": "📰 Newsletter digest — YYYY-MM-DD", "text": "{kept} keepů z {scanned} newsletterů{, N tool ideas pokud >0}. Top: {1-2 nejvyšší score tituly}.\n{Notion page URL}" }
 ```
-Drž text < 3900 znaků. Notion URL z odpovědi create_page (`url` field).
+Drž text < 3900 znaků. Notion URL z odpovědi `notion-create-pages` (`url` field).
 
 ## Krok 6 — Mark as read (best-effort)
 
